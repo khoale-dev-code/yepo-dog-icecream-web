@@ -460,12 +460,14 @@ function DogDetailModal({ dog, cardTheme, genderTheme, onClose }) {
       if (event.key === "ArrowRight") goNext();
     }
 
+    const previousOverflow = document.body.style.overflow;
+
     document.addEventListener("keydown", handleEscape);
     document.body.style.overflow = "hidden";
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
     };
   });
 
@@ -491,7 +493,7 @@ function DogDetailModal({ dog, cardTheme, genderTheme, onClose }) {
       >
         <div
           className={cn(
-            "flex items-center justify-between gap-3 px-4 py-3 sm:px-5",
+            "sticky top-0 z-30 flex shrink-0 items-center justify-between gap-3 px-4 py-3 sm:px-5",
             cardTheme.ribbon
           )}
         >
@@ -516,7 +518,7 @@ function DogDetailModal({ dog, cardTheme, genderTheme, onClose }) {
 
         <div
           className={cn(
-            "max-h-[calc(92vh-76px)] overflow-y-auto p-4 sm:p-5",
+            "min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5",
             cardTheme.modalBg
           )}
         >
