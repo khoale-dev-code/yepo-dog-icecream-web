@@ -1,0 +1,212 @@
+﻿import { BadgePercent, CalendarClock, Coffee, Gift, IceCream2, LayoutDashboard, Newspaper, PawPrint, Store, Utensils } from "lucide-react";
+
+export const EMPTY_FORMS = {
+  products: {
+    name: "",
+    category: "Ice Cream",
+    description: "",
+    price: "",
+    oldPrice: "",
+    tags: "",
+    sortOrder: "999",
+    isFeatured: true,
+    isAvailable: true,
+  },
+  toppings: {
+    name: "",
+    category: "Topping",
+    description: "",
+    price: "",
+    sortOrder: "999",
+    isAvailable: true,
+  },
+  dogs: {
+    name: "",
+    nickname: "",
+    age: "",
+    breed: "",
+    coatColor: "",
+    gender: "unknown",
+    personality: "",
+    favoriteTreat: "",
+    interactionNote: "",
+    birthday: "",
+    weight: "",
+    sortOrder: "999",
+    isFeatured: true,
+    isActive: true,
+  },
+  posts: {
+    title: "",
+    caption: "",
+    instagramUrl: "",
+    isPublished: true,
+    isPinned: false,
+  },
+  promotions: {
+    title: "",
+    subtitle: "",
+    description: "",
+    code: "",
+    discountText: "",
+    startAt: "",
+    endAt: "",
+    sortOrder: "999",
+    isActive: true,
+  },
+  reservations: {
+    customerName: "",
+    phone: "",
+    date: "",
+    time: "",
+    guestCount: "2",
+    note: "",
+    status: "pending",
+  },
+};
+
+export const RESERVATION_STATUS = [
+  { value: "pending", label: "Chờ xác nhận" },
+  { value: "confirmed", label: "Đã xác nhận" },
+  { value: "completed", label: "Hoàn tất" },
+  { value: "cancelled", label: "Đã hủy" },
+];
+
+export const DOG_GENDER_OPTIONS = [
+  { value: "unknown", label: "Chưa rõ" },
+  { value: "male", label: "Đực" },
+  { value: "female", label: "Cái" },
+];
+
+export const ADMIN_TABS = [
+  { id: "dashboard", label: "Tổng quan", icon: LayoutDashboard },
+  { id: "shop", label: "Cửa hàng", icon: Store },
+  { id: "products", label: "Menu", icon: Coffee },
+  { id: "toppings", label: "Topping", icon: Utensils },
+  { id: "dogs", label: "Hồ sơ cún", icon: PawPrint },
+  { id: "posts", label: "Bài đăng", icon: Newspaper },
+  { id: "promotions", label: "Khuyến mãi", icon: BadgePercent },
+  { id: "reservations", label: "Đặt bàn", icon: CalendarClock },
+];
+
+export const RESOURCE_CONFIG = {
+  products: {
+    title: "Quản lý menu",
+    formTitle: "Thông tin món",
+    emptyText: "Chưa có món nào.",
+    icon: Coffee,
+    supportMedia: true,
+    fields: [
+      { name: "name", label: "Tên món", required: true },
+      { name: "category", label: "Danh mục", required: true },
+      { name: "price", label: "Giá", inputMode: "numeric" },
+      { name: "oldPrice", label: "Giá cũ", inputMode: "numeric" },
+      { name: "description", label: "Mô tả", type: "textarea" },
+      { name: "tags", label: "Tags", placeholder: "best seller, kem, trà..." },
+      { name: "sortOrder", label: "Thứ tự", inputMode: "numeric" },
+      { name: "isFeatured", label: "Món nổi bật", type: "toggle" },
+      { name: "isAvailable", label: "Còn bán", type: "toggle" },
+    ],
+  },
+
+  toppings: {
+    title: "Quản lý topping",
+    formTitle: "Thông tin topping",
+    emptyText: "Chưa có topping nào.",
+    icon: Utensils,
+    supportMedia: false,
+    fields: [
+      { name: "name", label: "Tên topping", required: true },
+      { name: "category", label: "Nhóm", required: true },
+      { name: "price", label: "Giá", inputMode: "numeric" },
+      { name: "description", label: "Mô tả", type: "textarea" },
+      { name: "sortOrder", label: "Thứ tự", inputMode: "numeric" },
+      { name: "isAvailable", label: "Còn bán", type: "toggle" },
+    ],
+  },
+
+  dogs: {
+    title: "Quản lý hồ sơ cún",
+    formTitle: "Thông tin cún",
+    emptyText: "Chưa có hồ sơ cún nào.",
+    icon: PawPrint,
+    supportMedia: true,
+    fields: [
+      { name: "name", label: "Tên cún", required: true },
+      { name: "nickname", label: "Biệt danh" },
+      { name: "age", label: "Tuổi", placeholder: "Ví dụ: 2 tuổi" },
+      { name: "breed", label: "Chủng loại / giống" },
+      { name: "coatColor", label: "Màu lông" },
+      {
+        name: "gender",
+        label: "Giới tính",
+        type: "select",
+        options: DOG_GENDER_OPTIONS,
+      },
+      { name: "birthday", label: "Sinh nhật" },
+      { name: "weight", label: "Cân nặng" },
+      { name: "personality", label: "Tính cách", type: "textarea" },
+      { name: "favoriteTreat", label: "Món thích nhất" },
+      { name: "interactionNote", label: "Lưu ý khi tương tác", type: "textarea" },
+      { name: "sortOrder", label: "Thứ tự", inputMode: "numeric" },
+      { name: "isFeatured", label: "Cún nổi bật", type: "toggle" },
+      { name: "isActive", label: "Hiển thị ngoài website", type: "toggle" },
+    ],
+  },
+
+  posts: {
+    title: "Quản lý bài đăng",
+    formTitle: "Thông tin bài đăng",
+    emptyText: "Chưa có bài đăng nào.",
+    icon: Newspaper,
+    supportMedia: true,
+    fields: [
+      { name: "title", label: "Tiêu đề", required: true },
+      { name: "instagramUrl", label: "Link Instagram" },
+      { name: "caption", label: "Nội dung", type: "textarea" },
+      { name: "isPublished", label: "Public bài viết", type: "toggle" },
+      { name: "isPinned", label: "Ghim bài viết", type: "toggle" },
+    ],
+  },
+
+  promotions: {
+    title: "Quản lý khuyến mãi",
+    formTitle: "Thông tin khuyến mãi",
+    emptyText: "Chưa có khuyến mãi nào.",
+    icon: BadgePercent,
+    supportMedia: true,
+    fields: [
+      { name: "title", label: "Tên khuyến mãi", required: true },
+      { name: "subtitle", label: "Tiêu đề phụ" },
+      { name: "discountText", label: "Nhãn ưu đãi", placeholder: "Mua 2 tặng 1" },
+      { name: "code", label: "Mã khuyến mãi" },
+      { name: "startAt", label: "Ngày bắt đầu", type: "date" },
+      { name: "endAt", label: "Ngày kết thúc", type: "date" },
+      { name: "description", label: "Mô tả", type: "textarea" },
+      { name: "sortOrder", label: "Thứ tự", inputMode: "numeric" },
+      { name: "isActive", label: "Đang hiển thị", type: "toggle" },
+    ],
+  },
+
+  reservations: {
+    title: "Quản lý đặt bàn",
+    formTitle: "Thông tin đặt bàn",
+    emptyText: "Chưa có lịch đặt bàn nào.",
+    icon: CalendarClock,
+    supportMedia: false,
+    fields: [
+      { name: "customerName", label: "Tên khách", required: true },
+      { name: "phone", label: "Số điện thoại", required: true },
+      { name: "date", label: "Ngày", type: "date", required: true },
+      { name: "time", label: "Giờ", type: "time", required: true },
+      { name: "guestCount", label: "Số khách", inputMode: "numeric" },
+      {
+        name: "status",
+        label: "Trạng thái",
+        type: "select",
+        options: RESERVATION_STATUS,
+      },
+      { name: "note", label: "Ghi chú", type: "textarea" },
+    ],
+  },
+};
