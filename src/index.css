@@ -279,3 +279,21 @@ select:focus-visible,
     padding-bottom: 104px;
   }
 }
+
+/* Admin mobile real-device safe-area fix */
+@media (max-width: 1023px) {
+  html,
+  body,
+  #root {
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  body:has([data-admin-sidebar="bottom"]) main {
+    padding-bottom: calc(124px + env(safe-area-inset-bottom)) !important;
+  }
+
+  body:has([data-admin-sidebar="bottom"]) {
+    overscroll-behavior-y: contain;
+  }
+}

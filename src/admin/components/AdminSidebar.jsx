@@ -37,9 +37,9 @@ export function AdminSidebar({
     <aside
       data-admin-sidebar="bottom"
       className={cn(
-        "z-50 flex min-w-0 flex-col overflow-hidden font-brand text-[#b98c49] transition-[width] duration-300 ease-out",
+        "z-[70] flex min-w-0 flex-col overflow-hidden font-brand text-[#b98c49] transition-[width] duration-300 ease-out",
         "bg-[#f6d77d]",
-        "max-lg:fixed max-lg:inset-x-3 max-lg:bottom-3 max-lg:h-auto max-lg:rounded-[30px] max-lg:border-2 max-lg:border-[#b98c49] max-lg:shadow-[0_18px_44px_rgba(185,140,73,.24)] max-lg:pb-[max(0px,env(safe-area-inset-bottom))]",
+        "max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:h-[calc(72px+env(safe-area-inset-bottom))] max-lg:rounded-t-[28px] max-lg:rounded-b-none max-lg:border-x-0 max-lg:border-b-0 max-lg:border-t-2 max-lg:border-[#b98c49] max-lg:shadow-[0_-14px_34px_rgba(185,140,73,.22)] max-lg:pb-[env(safe-area-inset-bottom)]",
         "lg:h-dvh lg:min-h-dvh lg:border-r-4 lg:border-[#b98c49]",
         isCollapsed ? "lg:w-[110px]" : "lg:w-[320px]"
       )}
@@ -101,7 +101,7 @@ export function AdminSidebar({
         )}
       >
         {isCollapsed ? (
-          <div className="mx-auto grid h-16 w-16 place-items-center rounded-[24px] border-2 border-[#FFFAFA] bg-[#FFFAFA] text-[#b98c49] shadow-[0_4px_0_#b98c49] transition-transform duration-200 hover:-translate-y-1 hover:scale-105">
+          <div className="mx-auto grid h-16 w-16 place-items-center rounded-[24px] border-2 border-[#FFFAFA] bg-[#FFFAFA] text-[#b98c49] shadow-[0_4px_0_#b98c49]">
             {shop?.logoUrl ? (
               <img
                 src={shop.logoUrl}
@@ -120,7 +120,7 @@ export function AdminSidebar({
                   <img
                     src={shop.logoUrl}
                     alt={shop.name || "YEPO"}
-                    className="h-full w-full object-contain p-2 transition-transform hover:rotate-3 hover:scale-110"
+                    className="h-full w-full object-contain p-2"
                   />
                 ) : (
                   <Coffee className="text-[#b98c49]" size={30} strokeWidth={2.5} />
@@ -149,18 +149,16 @@ export function AdminSidebar({
                 {admin.username}
               </div>
             )}
-
-            <div className="absolute -bottom-4 -right-4 h-16 w-16 rounded-full bg-[#f6d77d] opacity-70 blur-xl" />
           </div>
         )}
       </div>
 
-      {/* Navigation: mobile bottom bar, desktop sidebar nav */}
+      {/* Mobile bottom dock + desktop sidebar nav */}
       <nav
         className={cn(
-          "hide-scrollbar flex shrink-0 gap-2 overflow-x-auto p-2",
-          "max-lg:items-center max-lg:justify-center",
-          "lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden",
+          "hide-scrollbar shrink-0",
+          "max-lg:flex max-lg:h-[72px] max-lg:items-center max-lg:gap-2 max-lg:overflow-x-auto max-lg:overflow-y-hidden max-lg:px-3 max-lg:py-2",
+          "lg:min-h-0 lg:flex lg:flex-1 lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden",
           isCollapsed ? "lg:items-center lg:px-4" : "lg:gap-4 lg:px-5"
         )}
       >
@@ -176,14 +174,14 @@ export function AdminSidebar({
               title={tab.label}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "group relative inline-flex shrink-0 items-center rounded-[24px] border-2 font-bold transition-all duration-200",
-                "max-lg:h-12 max-lg:w-12 max-lg:justify-center max-lg:p-0",
+                "group relative inline-flex shrink-0 items-center border-2 font-bold transition-all duration-200",
+                "max-lg:h-12 max-lg:w-12 max-lg:justify-center max-lg:rounded-[18px] max-lg:p-0",
                 isCollapsed
-                  ? "lg:h-14 lg:w-14 lg:justify-center lg:p-0"
-                  : "lg:w-full lg:justify-start lg:gap-4 lg:px-5 lg:py-4 lg:text-[15px]",
+                  ? "lg:h-14 lg:w-14 lg:justify-center lg:rounded-[24px] lg:p-0"
+                  : "lg:w-full lg:justify-start lg:gap-4 lg:rounded-[24px] lg:px-5 lg:py-4 lg:text-[15px]",
                 active
-                  ? "border-[#FFFAFA] bg-[#FFFAFA] text-[#b98c49] shadow-[0_4px_0_rgba(137,94,32,.28)]"
-                  : "border-transparent bg-[#FFFAFA]/42 text-[#8c672f] hover:-translate-y-1 hover:bg-[#FFFAFA]/72 hover:shadow-[0_4px_0_rgba(137,94,32,.16)]"
+                  ? "border-[#FFFAFA] bg-[#FFFAFA] text-[#b98c49] shadow-[0_3px_0_rgba(137,94,32,.24)]"
+                  : "border-transparent bg-[#FFFAFA]/42 text-[#8c672f] hover:bg-[#FFFAFA]/72 lg:hover:-translate-y-1 lg:hover:shadow-[0_4px_0_rgba(137,94,32,.16)]"
               )}
             >
               <Icon
