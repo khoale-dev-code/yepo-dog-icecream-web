@@ -235,29 +235,30 @@ export default function HomePage({ store }) {
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
       `}</style>
 
-      <section className="relative mx-4 overflow-hidden rounded-[2.5rem] border border-[#b98c49]/20 bg-white px-6 py-12 shadow-[0_8px_40px_rgba(185,140,73,0.08)] sm:mx-8 sm:p-14 lg:mx-12 lg:p-20">
+      <section className="relative mx-4 overflow-hidden rounded-[2rem] border border-[#b98c49]/20 bg-white px-5 py-9 shadow-[0_8px_40px_rgba(185,140,73,0.08)] sm:mx-8 sm:rounded-[2.5rem] sm:p-14 lg:mx-12 lg:p-20">
         <FloatingPaws scrollY={scrollY} />
 
-        <div className="relative grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
+        <div className="relative grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-12">
           <Reveal className="z-10 max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#b98c49]/30 bg-[#FFFAFA]/80 px-4 py-2 text-xs font-['Fredoka'] font-semibold uppercase tracking-widest text-[#b98c49] backdrop-blur-md">
-              <Sparkles size={14} className="text-[#b98c49]" />
-              YEPO Coffee & Pets
+            <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-[#b98c49]/30 bg-[#FFFAFA]/80 px-3 py-2 text-[10px] font-['Fredoka'] font-semibold uppercase tracking-[0.14em] text-[#b98c49] backdrop-blur-md sm:px-4 sm:text-xs sm:tracking-widest">
+              <Sparkles size={14} className="shrink-0 text-[#b98c49]" />
+              <span className="sm:hidden">YEPO Cafe & Pets</span>
+              <span className="hidden sm:inline">YEPO Coffee & Pets</span>
             </span>
 
-            <h1 className="mt-8 font-['Quicksand'] text-4xl font-bold tracking-tight text-[#2D2D2D] sm:text-6xl lg:leading-[1.1]">
+            <h1 className="mt-6 font-['Quicksand'] text-3xl font-bold tracking-tight text-[#2D2D2D] sm:mt-8 sm:text-6xl lg:leading-[1.1]">
               Trạm dừng chân bình yên giữa lòng thành phố.
             </h1>
 
-            <p className="mt-6 text-base font-normal leading-relaxed text-[#666666] sm:text-lg">
+            <p className="mt-4 text-sm font-normal leading-7 text-[#666666] sm:mt-6 sm:text-lg sm:leading-relaxed">
               {shop?.description ||
                 "Thưởng thức những ly cà phê nguyên bản, những món ngọt mềm mịn và chữa lành tâm hồn cùng những người bạn bốn chân đáng yêu nhất."}
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:gap-4">
               <Link
                 to="/menu"
-                className="group inline-flex h-14 items-center gap-2 rounded-full bg-[#b98c49] px-8 text-sm font-['Quicksand'] font-bold text-white transition-all duration-300 hover:bg-[#a1783a] hover:shadow-lg hover:shadow-[#b98c49]/30"
+                className="group inline-flex h-13 items-center justify-center gap-2 rounded-full bg-[#b98c49] px-6 text-sm font-['Quicksand'] font-bold text-white transition-all duration-300 hover:bg-[#a1783a] hover:shadow-lg hover:shadow-[#b98c49]/30 sm:h-14 sm:px-8"
               >
                 Khám phá Menu
                 <ArrowRight
@@ -268,18 +269,18 @@ export default function HomePage({ store }) {
 
               <a
                 href="/#reservation"
-                className="inline-flex h-14 items-center gap-2 rounded-full border-2 border-[#b98c49]/30 bg-white px-8 text-sm font-['Quicksand'] font-bold text-[#2D2D2D] transition-all duration-300 hover:border-[#b98c49] hover:bg-[#FFFAFA]"
+                className="inline-flex h-13 items-center justify-center gap-2 rounded-full border-2 border-[#b98c49]/30 bg-white px-6 text-sm font-['Quicksand'] font-bold text-[#2D2D2D] transition-all duration-300 hover:border-[#b98c49] hover:bg-[#FFFAFA] sm:h-14 sm:px-8"
               >
                 <CalendarDays size={18} className="text-[#b98c49]" />
                 Đặt bàn trước
               </a>
             </div>
 
-            <div className="mt-12 flex items-center gap-8 border-t border-[#b98c49]/20 pt-8">
+            <div className="mt-9 grid grid-cols-3 gap-3 border-t border-[#b98c49]/20 pt-6 sm:mt-12 sm:flex sm:items-center sm:gap-8 sm:pt-8">
               <MetricCard label="Món đặc trưng" value={allProducts.length} />
-              <div className="h-10 w-px bg-[#b98c49]/20" />
+              <div className="hidden h-10 w-px bg-[#b98c49]/20 sm:block" />
               <MetricCard label="Bé cún" value={featuredDogs.length} />
-              <div className="h-10 w-px bg-[#b98c49]/20" />
+              <div className="hidden h-10 w-px bg-[#b98c49]/20 sm:block" />
               <MetricCard label="Câu chuyện" value={getList(store, "posts").length} />
             </div>
           </Reveal>
@@ -288,7 +289,7 @@ export default function HomePage({ store }) {
             delay={120}
             className="relative mx-auto w-full max-w-lg lg:max-w-none"
           >
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-[#b98c49]/20 shadow-2xl shadow-[#b98c49]/15 sm:aspect-square">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] border border-[#b98c49]/20 shadow-2xl shadow-[#b98c49]/15 sm:aspect-square sm:rounded-[2rem]">
               <img
                 src={shop?.heroImageUrl || shop?.coverImageUrl || getMedia(heroProduct)}
                 alt={shop?.name || "YEPO"}
@@ -296,6 +297,20 @@ export default function HomePage({ store }) {
                 style={{ transform: heroImgTransform }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
+
+              <div className="absolute bottom-3 left-3 right-3 flex items-center gap-3 rounded-2xl border border-white/70 bg-white/90 p-3 shadow-[0_12px_30px_rgba(185,140,73,0.18)] backdrop-blur-md sm:hidden">
+                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#f6d77d]/45 text-[#b98c49]">
+                  <PawPrint size={18} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-['Fredoka'] font-semibold text-[#2D2D2D]">
+                    Pet-friendly Cafe
+                  </p>
+                  <p className="truncate text-xs font-['Quicksand'] text-[#666666]">
+                    Không gian mở & an toàn
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="absolute -bottom-6 -left-6 hidden items-center gap-4 rounded-2xl border border-[#b98c49]/20 bg-white/90 p-5 shadow-[0_20px_40px_rgba(185,140,73,0.1)] backdrop-blur-xl sm:flex">
@@ -324,13 +339,26 @@ export default function HomePage({ store }) {
         />
 
         {featuredDogs.length > 0 ? (
-          <section className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
-            {featuredDogs.map((dog, index) => (
-              <Reveal key={dog._id || dog.id || dog.name} delay={index * 100}>
-                <DogProfileCard dog={dog} />
-              </Reveal>
-            ))}
-          </section>
+          <>
+            <section className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-8 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-3">
+              {featuredDogs.map((dog, index) => (
+                <Reveal
+                  key={dog._id || dog.id || dog.name}
+                  delay={index * 100}
+                  className="min-w-[82vw] max-w-[360px] snap-start sm:min-w-0 sm:max-w-none"
+                >
+                  <DogProfileCard dog={dog} />
+                </Reveal>
+              ))}
+            </section>
+
+            {featuredDogs.length > 1 && (
+              <div className="-mt-5 flex items-center justify-between rounded-2xl border border-[#b98c49]/10 bg-white px-4 py-3 text-xs font-['Quicksand'] font-bold text-[#8c672f] shadow-sm sm:hidden">
+                <span>Lướt sang phải để xem thêm các bé</span>
+                <ArrowRight size={15} />
+              </div>
+            )}
+          </>
         ) : (
           <Reveal
             as="section"
@@ -444,7 +472,7 @@ export default function HomePage({ store }) {
         </Reveal>
       </div>
 
-      <div className="mx-4 space-y-10 sm:mx-8 lg:mx-12">
+      <div className="mx-4 space-y-6 sm:mx-8 sm:space-y-10 lg:mx-12">
         <SectionHeader
           eyebrow="Our Stories"
           title="Góc chuyện trò"
@@ -453,42 +481,103 @@ export default function HomePage({ store }) {
         />
 
         {posts.length > 0 ? (
-          <section className="grid gap-8 lg:grid-cols-2">
-            {posts.map((post, index) => (
-              <Reveal
-                key={post._id || post.id || post.title}
-                delay={index * 120}
-                as="article"
-                className="group flex flex-col overflow-hidden rounded-[2rem] border border-[#b98c49]/20 bg-white shadow-sm transition-all duration-300 hover:border-[#b98c49]/50 hover:shadow-[0_10px_30px_rgba(185,140,73,0.1)] sm:flex-row"
-              >
-                <div className="relative overflow-hidden border-b border-[#b98c49]/10 sm:w-1/2 sm:border-b-0 sm:border-r">
-                  <img
-                    src={getMedia(post)}
-                    alt={post.title}
-                    className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:h-full"
-                  />
-                </div>
+          <>
+            {/* Mobile: story card kéo ngang, gọn và dễ lướt */}
+            <section className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 lg:hidden">
+              {posts.map((post, index) => (
+                <Reveal
+                  key={post._id || post.id || post.title}
+                  delay={index * 100}
+                  as="article"
+                  className="min-w-[82vw] max-w-[350px] snap-start overflow-hidden rounded-[2rem] border border-[#b98c49]/15 bg-white shadow-[0_12px_34px_rgba(185,140,73,0.1)]"
+                >
+                  <Link to="/posts" className="group block">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-[#FFFAFA]">
+                      <img
+                        src={getMedia(post)}
+                        alt={post.title || "Bài viết YEPO"}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
 
-                <div className="flex flex-1 flex-col p-6 sm:w-1/2 sm:p-8">
-                  <p className="text-[11px] font-['Quicksand'] font-bold uppercase tracking-widest text-[#b98c49]">
-                    Chuyện nhà YEPO
-                  </p>
-                  <h3 className="mt-3 text-xl font-['Quicksand'] font-bold leading-snug text-[#2D2D2D]">
-                    {post.title || "Tiêu đề bài viết"}
-                  </h3>
-                  <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-[#666666]">
-                    {post.content || post.caption || "Nội dung đang cập nhật..."}
-                  </p>
-                  <Link
-                    to="/posts"
-                    className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-['Quicksand'] font-bold text-[#b98c49] transition-opacity hover:opacity-70"
-                  >
-                    Đọc tiếp <ArrowRight size={16} />
+                      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent" />
+
+                      <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-['Quicksand'] font-bold uppercase tracking-widest text-[#b98c49] shadow-sm">
+                        Chuyện YEPO
+                      </div>
+
+                      <div className="absolute bottom-4 right-4 grid h-10 w-10 place-items-center rounded-full bg-[#f6d77d] text-[#8c672f] shadow-sm">
+                        <Sparkles size={17} />
+                      </div>
+                    </div>
+
+                    <div className="p-5">
+                      <p className="text-[11px] font-['Fredoka'] font-semibold uppercase tracking-widest text-[#b98c49]">
+                        Story #{String(index + 1).padStart(2, "0")}
+                      </p>
+
+                      <h3 className="mt-2 line-clamp-2 min-h-[56px] text-xl font-['Quicksand'] font-bold leading-tight text-[#2D2D2D]">
+                        {post.title || "Tiêu đề bài viết"}
+                      </h3>
+
+                      <p className="mt-3 line-clamp-3 min-h-[66px] text-sm leading-6 text-[#666666]">
+                        {post.content || post.caption || "Nội dung đang cập nhật..."}
+                      </p>
+
+                      <div className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-full bg-[#f6d77d]/35 px-5 text-sm font-['Quicksand'] font-bold text-[#b98c49] transition-colors group-hover:bg-[#b98c49] group-hover:text-white">
+                        Đọc tiếp
+                        <ArrowRight size={15} />
+                      </div>
+                    </div>
                   </Link>
-                </div>
-              </Reveal>
-            ))}
-          </section>
+                </Reveal>
+              ))}
+            </section>
+
+            {posts.length > 1 && (
+              <div className="-mt-4 flex items-center justify-between rounded-2xl border border-[#b98c49]/10 bg-white px-4 py-3 text-xs font-['Quicksand'] font-bold text-[#8c672f] shadow-sm lg:hidden">
+                <span>Lướt sang phải để xem thêm câu chuyện</span>
+                <ArrowRight size={15} />
+              </div>
+            )}
+
+            {/* Desktop: giữ bố cục 2 cột như cũ */}
+            <section className="hidden gap-8 lg:grid lg:grid-cols-2">
+              {posts.map((post, index) => (
+                <Reveal
+                  key={post._id || post.id || post.title}
+                  delay={index * 120}
+                  as="article"
+                  className="group flex flex-col overflow-hidden rounded-[2rem] border border-[#b98c49]/20 bg-white shadow-sm transition-all duration-300 hover:border-[#b98c49]/50 hover:shadow-[0_10px_30px_rgba(185,140,73,0.1)] sm:flex-row"
+                >
+                  <div className="relative overflow-hidden border-b border-[#b98c49]/10 sm:w-1/2 sm:border-b-0 sm:border-r">
+                    <img
+                      src={getMedia(post)}
+                      alt={post.title}
+                      className="h-64 w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:h-full"
+                    />
+                  </div>
+
+                  <div className="flex flex-1 flex-col p-6 sm:w-1/2 sm:p-8">
+                    <p className="text-[11px] font-['Quicksand'] font-bold uppercase tracking-widest text-[#b98c49]">
+                      Chuyện nhà YEPO
+                    </p>
+                    <h3 className="mt-3 text-xl font-['Quicksand'] font-bold leading-snug text-[#2D2D2D]">
+                      {post.title || "Tiêu đề bài viết"}
+                    </h3>
+                    <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-[#666666]">
+                      {post.content || post.caption || "Nội dung đang cập nhật..."}
+                    </p>
+                    <Link
+                      to="/posts"
+                      className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-['Quicksand'] font-bold text-[#b98c49] transition-opacity hover:opacity-70"
+                    >
+                      Đọc tiếp <ArrowRight size={16} />
+                    </Link>
+                  </div>
+                </Reveal>
+              ))}
+            </section>
+          </>
         ) : (
           <Reveal
             as="section"
@@ -641,7 +730,7 @@ function ReservationSection({ shop, scrollY }) {
       setMessage({
         type: "error",
         text: "Vui lòng nhập số điện thoại hợp lệ.",
-      });
+      }); 
       return;
     }
 
@@ -984,11 +1073,11 @@ function ReservationNote({ icon: Icon, title, text }) {
 
 function MetricCard({ label, value }) {
   return (
-    <div>
-      <p className="text-3xl font-['Fredoka'] font-semibold text-[#2D2D2D] sm:text-4xl">
+    <div className="rounded-2xl bg-[#FFFAFA] px-2.5 py-3 text-center ring-1 ring-[#b98c49]/10 sm:bg-transparent sm:px-0 sm:py-0 sm:text-left sm:ring-0">
+      <p className="text-2xl font-['Fredoka'] font-semibold text-[#2D2D2D] sm:text-4xl">
         {value}
       </p>
-      <p className="mt-1 text-xs font-['Quicksand'] font-bold uppercase tracking-widest text-[#b98c49]">
+      <p className="mt-1 text-[10px] font-['Quicksand'] font-bold uppercase leading-tight tracking-widest text-[#b98c49] sm:text-xs">
         {label}
       </p>
     </div>

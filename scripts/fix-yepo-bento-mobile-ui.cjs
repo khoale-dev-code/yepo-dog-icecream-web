@@ -1,4 +1,36 @@
-import React from "react";
+﻿const fs = require("fs");
+const path = require("path");
+
+function walk(dir, result = []) {
+  if (!fs.existsSync(dir)) return result;
+
+  for (const item of fs.readdirSync(dir)) {
+    const fullPath = path.join(dir, item);
+    const stat = fs.statSync(fullPath);
+
+    if (stat.isDirectory()) {
+      if (!["node_modules", "dist", ".git"].includes(item)) {
+        walk(fullPath, result);
+      }
+    } else if (/\.(jsx|js)$/.test(item)) {
+      result.push(fullPath);
+    }
+  }
+
+  return result;
+}
+
+const files = walk(path.resolve(process.cwd(), "src"));
+const pagePath = files.find((file) => {
+  const content = fs.readFileSync(file, "utf8");
+  return content.includes("export default function YepoBentoLanding");
+});
+
+if (!pagePath) {
+  throw new Error("Không tìm thấy file chứa export default function YepoBentoLanding");
+}
+
+const newContent = String.raw`import React from "react";
 import {
   Clock,
   Heart,
@@ -206,3 +238,8 @@ function InfoCard({
     </div>
   );
 }
+`;
+
+fs.writeFileSync(pagePath, newContent, "utf8");
+
+console.log("Đã cập nhật mobile UI cho:", pagePath);

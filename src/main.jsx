@@ -6,6 +6,7 @@ import App from "./App.jsx";
 import AdminPage from "./components/AdminPage.jsx";
 import { SnackbarProvider } from "./components/ui/SnackbarProvider.jsx";
 import "./index.css";
+import SiteMeta from "./components/public/SiteMeta";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    <SiteMeta />
     <SnackbarProvider>
       <RouterProvider router={router} />
     </SnackbarProvider>

@@ -1,4 +1,46 @@
-import {
+﻿const fs = require("fs");
+const path = require("path");
+
+function walk(dir, result = []) {
+  if (!fs.existsSync(dir)) return result;
+
+  for (const item of fs.readdirSync(dir)) {
+    const fullPath = path.join(dir, item);
+    const stat = fs.statSync(fullPath);
+
+    if (stat.isDirectory()) {
+      if (!["node_modules", "dist", ".git"].includes(item)) {
+        walk(fullPath, result);
+      }
+    } else if (/\.(jsx|js)$/.test(item)) {
+      result.push(fullPath);
+    }
+  }
+
+  return result;
+}
+
+const files = walk(path.resolve(process.cwd(), "src"));
+
+let postsPagePath = files.find((file) => {
+  const content = fs.readFileSync(file, "utf8");
+  return (
+    content.includes("export default function PostsPage") &&
+    content.includes("MobilePostDetail") &&
+    content.includes("PostGridCell") &&
+    content.includes("ProfileHeader")
+  );
+});
+
+if (!postsPagePath) {
+  postsPagePath = path.resolve(process.cwd(), "src/pages/public/PostsPage.jsx");
+}
+
+if (!fs.existsSync(postsPagePath)) {
+  throw new Error("Không tìm thấy file PostsPage public. Kiểm tra lại đường dẫn src/pages/public/PostsPage.jsx");
+}
+
+const newContent = `import {
   ArrowLeft,
   CalendarDays,
   ChevronLeft,
@@ -74,8 +116,8 @@ function normalizePostMedia(media = []) {
         resourceType: type,
         name:
           typeof item === "string"
-            ? `Media ${index + 1}`
-            : item.name || item.originalName || `Media ${index + 1}`,
+            ? \`Media \${index + 1}\`
+            : item.name || item.originalName || \`Media \${index + 1}\`,
       };
     })
     .filter(Boolean);
@@ -89,7 +131,7 @@ function getPostTitle(post) {
   if (post?.title) return post.title;
 
   const firstLine = String(getPostContent(post))
-    .split("\n")
+    .split("\\n")
     .find((line) => line.trim());
 
   return firstLine?.trim() || "Bài đăng YEPO";
@@ -97,7 +139,7 @@ function getPostTitle(post) {
 
 function formatHours(shop) {
   if (shop?.openTime && shop?.closeTime) {
-    return `${shop.openTime} – ${shop.closeTime}`;
+    return \`\${shop.openTime} – \${shop.closeTime}\`;
   }
 
   if (shop?.openingHours) return shop.openingHours;
@@ -110,9 +152,9 @@ function timeAgo(raw) {
     const diff = (Date.now() - new Date(raw)) / 1000;
 
     if (diff < 60) return "vừa xong";
-    if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)} ngày trước`;
+    if (diff < 3600) return \`\${Math.floor(diff / 60)} phút trước\`;
+    if (diff < 86400) return \`\${Math.floor(diff / 3600)} giờ trước\`;
+    if (diff < 604800) return \`\${Math.floor(diff / 86400)} ngày trước\`;
 
     return new Date(raw).toLocaleDateString("vi-VN");
   } catch {
@@ -123,7 +165,7 @@ function timeAgo(raw) {
 function renderCaption(text) {
   if (!text) return null;
 
-  return text.split(/(\s+)/).map((word, index) =>
+  return text.split(/(\\s+)/).map((word, index) =>
     word.startsWith("#") ? (
       <span key={index} className="font-bold text-[#b98c49]">
         {word}
@@ -193,9 +235,9 @@ export default function PostsPage({ store }) {
 
   return (
     <main className="min-h-screen bg-[#FFFAFA] font-['Quicksand'] text-[#2D2D2D]">
-      <style>{`
+      <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
-      `}</style>
+      \`}</style>
 
       <div className="mx-auto w-full max-w-6xl px-3 py-5 sm:px-8 sm:py-12">
         <ProfileHeader shop={shop} postCount={posts.length} />
@@ -254,7 +296,7 @@ function ProfileHeader({ shop, postCount }) {
   const address = shop?.address;
   const handle =
     shop?.username ||
-    String(shop?.name || "YEPO").toLowerCase().replace(/\s+/g, "") ||
+    String(shop?.name || "YEPO").toLowerCase().replace(/\\s+/g, "") ||
     "yepo";
 
   return (
@@ -393,7 +435,7 @@ function PostGridCell({ post, onClick }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="group relative block aspect-[4/5] w-full overflow-hidden rounded-[1.35rem] bg-[#FFFAFA] text-left outline-none ring-1 ring-white/70 transition active:scale-[0.98] sm:aspect-square sm:rounded-none sm:ring-0"
-      aria-label={`Mở bài viết ${title}`}
+      aria-label={\`Mở bài viết \${title}\`}
     >
       {hasMedia ? (
         isVideo ? (
@@ -555,7 +597,7 @@ function MediaCarousel({ media = [], mode = "modal" }) {
         <img
           key={currentMedia.url}
           src={currentMedia.url}
-          alt={currentMedia.name || `Media ${index + 1}`}
+          alt={currentMedia.name || \`Media \${index + 1}\`}
           draggable={false}
           className={[
             "absolute inset-0 h-full w-full bg-[#111]",
@@ -587,7 +629,7 @@ function MediaCarousel({ media = [], mode = "modal" }) {
           <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5">
             {safeMedia.map((item, dotIndex) => (
               <button
-                key={`${item.url}-${dotIndex}`}
+                key={\`\${item.url}-\${dotIndex}\`}
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation();
@@ -597,7 +639,7 @@ function MediaCarousel({ media = [], mode = "modal" }) {
                   "h-1.5 rounded-full transition-all",
                   dotIndex === index ? "w-5 bg-white" : "w-1.5 bg-white/45",
                 ].join(" ")}
-                aria-label={`Media ${dotIndex + 1}`}
+                aria-label={\`Media \${dotIndex + 1}\`}
               />
             ))}
           </div>
@@ -618,7 +660,7 @@ function DesktopPostModal({ post, shop, onClose }) {
   const hasMedia = media.length > 0;
   const shopHandle =
     shop?.username ||
-    String(shop?.name || "YEPO").toLowerCase().replace(/\s+/g, "") ||
+    String(shop?.name || "YEPO").toLowerCase().replace(/\\s+/g, "") ||
     "yepo";
 
   useEffect(() => {
@@ -703,7 +745,7 @@ function MobilePostDetail({ post, shop, onClose }) {
   const hasMedia = media.length > 0;
   const shopHandle =
     shop?.username ||
-    String(shop?.name || "YEPO").toLowerCase().replace(/\s+/g, "") ||
+    String(shop?.name || "YEPO").toLowerCase().replace(/\\s+/g, "") ||
     "yepo";
 
   return (
@@ -782,3 +824,8 @@ function ShopAvatar({ shop, small = false }) {
     </div>
   );
 }
+`;
+
+fs.writeFileSync(postsPagePath, newContent, "utf8");
+
+console.log("Đã cập nhật UI mobile PostsPage tại:", postsPagePath);

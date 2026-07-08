@@ -159,7 +159,7 @@ export function AdminSidebar({
       <nav
         className={cn(
           "hide-scrollbar flex shrink-0 gap-2 overflow-x-auto p-2",
-          "max-lg:items-center max-lg:justify-start",
+          "max-lg:items-center max-lg:justify-center",
           "lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden",
           isCollapsed ? "lg:items-center lg:px-4" : "lg:gap-4 lg:px-5"
         )}
@@ -173,11 +173,11 @@ export function AdminSidebar({
               key={tab.id}
               type="button"
               onClick={() => handleSelectTab(tab.id)}
-              title={isCollapsed ? tab.label : undefined}
+              title={tab.label}
               aria-current={active ? "page" : undefined}
               className={cn(
                 "group relative inline-flex shrink-0 items-center rounded-[24px] border-2 font-bold transition-all duration-200",
-                "max-lg:min-w-[76px] max-lg:flex-col max-lg:justify-center max-lg:gap-1 max-lg:px-3 max-lg:py-2.5 max-lg:text-[11px]",
+                "max-lg:h-12 max-lg:w-12 max-lg:justify-center max-lg:p-0",
                 isCollapsed
                   ? "lg:h-14 lg:w-14 lg:justify-center lg:p-0"
                   : "lg:w-full lg:justify-start lg:gap-4 lg:px-5 lg:py-4 lg:text-[15px]",
@@ -198,7 +198,7 @@ export function AdminSidebar({
 
               <span
                 className={cn(
-                  "max-lg:block max-lg:leading-none",
+                  "max-lg:hidden",
                   isCollapsed ? "lg:hidden" : "lg:inline"
                 )}
               >

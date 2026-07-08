@@ -1,4 +1,36 @@
-import {
+﻿const fs = require("fs");
+const path = require("path");
+
+function walk(dir, result = []) {
+  if (!fs.existsSync(dir)) return result;
+
+  for (const item of fs.readdirSync(dir)) {
+    const fullPath = path.join(dir, item);
+    const stat = fs.statSync(fullPath);
+
+    if (stat.isDirectory()) {
+      if (!["node_modules", "dist", ".git"].includes(item)) {
+        walk(fullPath, result);
+      }
+    } else if (/\.(jsx|js)$/.test(item)) {
+      result.push(fullPath);
+    }
+  }
+
+  return result;
+}
+
+const files = walk(path.resolve(process.cwd(), "src"));
+const footerPath = files.find((file) => {
+  const content = fs.readFileSync(file, "utf8");
+  return content.includes("export default function Footer");
+});
+
+if (!footerPath) {
+  throw new Error("Không tìm thấy file Footer có export default function Footer");
+}
+
+const newFooter = `import {
   ExternalLink,
   Heart,
   Instagram,
@@ -141,3 +173,8 @@ export default function Footer({ shop = {}, apiStatus }) {
     </footer>
   );
 }
+`;
+
+fs.writeFileSync(footerPath, newFooter, "utf8");
+
+console.log("Đã cập nhật Footer mobile UI tại:", footerPath);
