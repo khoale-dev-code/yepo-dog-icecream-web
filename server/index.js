@@ -25,14 +25,57 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-const PORT = Number(env.port || 4000);
-const CLIENT_ORIGIN = env.clientOrigin || "http://localhost:5173";
-const IS_PRODUCTION = env.nodeEnv === "production";
+const PORT = Number(process.env.PORT || env.port || 4000);
+const IS_PRODUCTION = (process.env.NODE_ENV || env.nodeEnv) === "production";
+
+const DEFAULT_CLIENT_ORIGINS = [
+  "http://localhost:5173",
+  "http://localhost:4173",
+  "http://localhost:4000",
+];
+
+const CLIENT_ORIGINS = String(
+  process.env.CLIENT_ORIGIN || env.clientOrigin || DEFAULT_CLIENT_ORIGINS[0]
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const ALLOWED_ORIGINS = Array.from(
+  new Set([...DEFAULT_CLIENT_ORIGINS, ...CLIENT_ORIGINS])
+);
 
 app.disable("x-powered-by");
+app.set("trust proxy", 1);
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+
+  try {
+    const url = new URL(origin);
+
+    if (url.hostname.endsWith(".vercel.app")) return true;
+    if (url.hostname.endsWith(".onrender.com")) return true;
+
+    return false;
+  } catch {
+    return false;
+  }
+}
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", CLIENT_ORIGIN);
+  const requestOrigin = req.headers.origin;
+
+  if (isAllowedOrigin(requestOrigin)) {
+    res.setHeader(
+      "Access-Control-Allow-Origin",
+      requestOrigin || CLIENT_ORIGINS[0] || DEFAULT_CLIENT_ORIGINS[0]
+    );
+  }
+
+  res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader(
     "Access-Control-Allow-Headers",
@@ -59,13 +102,14 @@ app.use((req, res, next) => {
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
   }
 
-  next();
+  return next();
 });
 
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
     service: "yepo-dog-icecream-api",
+    environment: process.env.NODE_ENV || env.nodeEnv || "development",
     time: new Date().toISOString(),
   });
 });
@@ -97,6 +141,13 @@ app.use("/api/upload", requireAdmin, uploadRoutes);
  */
 app.use("/api/reservations", reservationRoutes);
 
+/**
+ * Nếu deploy fullstack trên Render:
+ * npm run build tạo thư mục dist, backend sẽ serve frontend.
+ *
+ * Nếu frontend deploy riêng trên Vercel:
+ * phần này không ảnh hưởng API.
+ */
 if (IS_PRODUCTION) {
   const clientDistPath = path.resolve(__dirname, "../dist");
 
@@ -139,14 +190,16 @@ async function bootstrap() {
   try {
     await connectDatabase();
 
-    const server = app.listen(PORT, () => {
-      console.log(`[api] running on http://localhost:${PORT}`);
-      console.log(`[api] client origin: ${CLIENT_ORIGIN}`);
+    const server = app.listen(PORT, "0.0.0.0", () => {
+      console.log(`[api] running on port ${PORT}`);
+      console.log(`[api] allowed origins: ${ALLOWED_ORIGINS.join(", ")}`);
     });
 
     server.on("error", (error) => {
       if (error.code === "EADDRINUSE") {
-        console.error(`[api] port ${PORT} đang được sử dụng. Hãy chạy npm run kill:api rồi chạy lại.`);
+        console.error(
+          `[api] port ${PORT} đang được sử dụng. Hãy chạy npm run kill:api rồi chạy lại.`
+        );
         process.exit(1);
       }
 
@@ -160,3 +213,4 @@ async function bootstrap() {
 
 bootstrap();
 
+export default app;
