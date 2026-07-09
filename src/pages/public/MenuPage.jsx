@@ -306,12 +306,12 @@ export default function MenuPage({ store }) {
         )?.name || "Danh mục";
 
   return (
-    <main className="min-h-screen bg-[#FFFAFA] font-['Quicksand'] text-[#2D2D2D]">
+    <main data-public-page="menu" className="min-h-screen w-full max-w-none overflow-x-hidden bg-[#FFFAFA] font-['Quicksand'] text-[#2D2D2D]">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
       `}</style>
 
-      <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl min-w-0 px-3 py-5 sm:px-6 sm:py-8 lg:px-8">
         <section className="rounded-[2rem] border border-[#b98c49]/20 bg-white p-4 shadow-[0_8px_34px_rgba(185,140,73,0.07)] sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0">
