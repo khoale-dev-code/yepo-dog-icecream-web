@@ -13,6 +13,7 @@
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import ToppingSection from "../../components/public/toppings/ToppingSection.jsx";
 
 const PRODUCT_PAGE_SIZE = 10;
 
@@ -836,59 +837,6 @@ function UniformProductCard({ product, variant = "desktop" }) {
         </div>
       </div>
     </Link>
-  );
-}
-
-function ToppingSection({ toppings }) {
-  return (
-    <section className="mt-6 rounded-[2rem] border border-[#b98c49]/20 bg-white p-4 shadow-[0_12px_42px_rgba(185,140,73,.08)] sm:p-6">
-      <div className="mb-4">
-        <p className="inline-flex items-center gap-2 rounded-full bg-[#f6d77d]/35 px-3 py-2 text-[11px] font-['Fredoka'] font-semibold uppercase tracking-widest text-[#8c672f]">
-          <Plus size={14} />
-          Topping
-        </p>
-
-        <h2 className="mt-3 text-2xl font-bold text-[#2D2D2D] sm:text-3xl">
-          Thêm topping
-        </h2>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {toppings.slice(0, 8).map((topping) => (
-          <ToppingCard key={getId(topping)} topping={topping} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function ToppingCard({ topping }) {
-  const image = getMedia(topping);
-
-  return (
-    <div className="rounded-[1.5rem] border border-[#b98c49]/15 bg-[#FFFAFA] p-3 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_35px_rgba(185,140,73,.1)]">
-      <div className="aspect-square overflow-hidden rounded-[1.25rem] bg-white">
-        {image ? (
-          <img
-            src={image}
-            alt={topping.name}
-            className="h-full w-full object-contain p-3"
-          />
-        ) : (
-          <div className="grid h-full place-items-center text-[#b98c49]">
-            <Sparkles size={26} />
-          </div>
-        )}
-      </div>
-
-      <p className="mt-3 line-clamp-2 text-sm font-bold text-[#2D2D2D]">
-        {topping.name}
-      </p>
-
-      <p className="mt-1 text-sm font-bold text-[#b98c49]">
-        {formatPrice(topping.price)}
-      </p>
-    </div>
   );
 }
 

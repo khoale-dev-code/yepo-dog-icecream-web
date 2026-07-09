@@ -360,3 +360,27 @@ body {
 [name] {
   scroll-margin-top: 96px;
 }
+
+/* Public footer mobile gap fix */
+[data-yepo-public-footer="true"] {
+  min-height: 0 !important;
+  height: auto !important;
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 640px) {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  [data-yepo-public-footer="true"] {
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+  }
+
+  [data-yepo-public-footer="true"] * {
+    box-sizing: border-box;
+  }
+}

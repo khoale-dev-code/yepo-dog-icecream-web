@@ -1,288 +1,410 @@
 ﻿import {
+  BadgePercent,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  EyeOff,
   ImagePlus,
   Loader2,
   Save,
-  UploadCloud,
+  Sparkles,
+  Trash2,
   X,
 } from "lucide-react";
-import { cn } from "../utils/adminUtils";
-import { getToppingImage } from "./toppingUtils";
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
+
+function moneyInput(value) {
+  return String(value || "").replace(/[^\d]/g, "");
+}
+
+function formatVndInput(value) {
+  const digits = moneyInput(value);
+
+  if (!digits) return "";
+
+  return Number(digits).toLocaleString("vi-VN");
+}
+
+function formatMoneyPreview(value) {
+  const digits = moneyInput(value);
+
+  if (!digits) return "Chưa nhập giá";
+
+  return Number(digits).toLocaleString("vi-VN") + " VNĐ";
+}
 
 export function ToppingPanel({
   open,
   editing,
   form,
-  selectedPreview,
+  imageItems = [],
   submitting,
   onClose,
   onSubmit,
   onUpdate,
-  onFileChange,
+  onFilesAdd,
+  onImageMove,
+  onImageRemove,
   onClearImage,
 }) {
-  const imagePreview = selectedPreview || form.imageUrl || getToppingImage(form);
-  const isVisible = form.isActive !== false && form.isAvailable !== false;
+  const mainImage = imageItems[0];
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape" && !submitting) {
+        onClose();
+      }
+    }
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, submitting, onClose]);
 
   if (!open) return null;
 
-  return (
-    <div className="fixed inset-0 z-[90]">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#2d2015]/55 p-3 backdrop-blur-sm sm:p-5"
+      role="dialog"
+      aria-modal="true"
+    >
       <button
         type="button"
-        className="absolute inset-0 bg-[#2f2115]/35 backdrop-blur-sm"
-        onClick={onClose}
-        aria-label="Đóng panel"
+        onClick={submitting ? undefined : onClose}
+        className="absolute inset-0 cursor-default"
+        aria-label="Đóng panel topping"
       />
 
       <form
         onSubmit={onSubmit}
-        className="absolute inset-y-0 right-0 flex w-full max-w-[520px] flex-col overflow-hidden bg-[#FFFAFA] shadow-[-20px_0_60px_rgba(47,33,21,.18)] sm:rounded-l-[34px]"
+        className="relative z-10 flex h-[88dvh] w-full max-w-6xl flex-col overflow-hidden rounded-[34px] border border-[#d8b77e]/80 bg-[#FFFAFA] shadow-[0_28px_90px_rgba(45,32,21,.28)]"
       >
-        <PanelHeader editing={editing} onClose={onClose} />
-
-        <div className="flex-1 space-y-5 overflow-y-auto p-5">
-          <section className="rounded-[26px] border border-[#ead7b6] bg-white p-4">
-            <p className="text-sm font-black text-[#3b2a18]">
-              Thông tin topping
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[#d8b77e]/60 bg-white px-4 py-4 sm:px-6">
+          <div className="min-w-0">
+            <p className="inline-flex items-center gap-2 text-[11px] font-brand uppercase tracking-[0.16em] text-[#b98c49]">
+              <Sparkles size={14} />
+              {editing ? "Chỉnh sửa topping" : "Thêm topping mới"}
             </p>
 
-            <div className="mt-4 grid gap-4">
-              <Field
-                label="Tên topping"
-                value={form.name}
-                required
-                placeholder="Ví dụ: Trân châu, Pudding..."
-                onChange={(value) => onUpdate("name", value)}
-              />
+            <h2 className="font-sniglet mt-1 truncate text-2xl leading-tight text-[#3b2a18] sm:text-3xl">
+              {editing ? "Cập nhật topping" : "Tạo topping"}
+            </h2>
+          </div>
 
-              <Textarea
-                label="Mô tả ngắn"
-                value={form.description}
-                placeholder="Mô tả topping..."
-                onChange={(value) => onUpdate("description", value)}
-              />
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={submitting}
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#FFFAFA] text-[#8c672f] ring-1 ring-[#d8b77e]/70 transition hover:bg-[#f6d77d]/25 disabled:opacity-50"
+            aria-label="Đóng"
+          >
+            <X size={20} />
+          </button>
+        </header>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field
-                  label="Giá topping"
-                  value={form.price}
-                  inputMode="numeric"
-                  placeholder="10000"
-                  onChange={(value) =>
-                    onUpdate("price", value.replace(/[^\d]/g, ""))
-                  }
-                />
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(380px,.95fr)]">
+            <section className="min-w-0 overflow-hidden rounded-[28px] border border-[#d8b77e]/65 bg-white shadow-sm">
+              <div className="relative aspect-[16/8.5] bg-[#fff7eb] lg:aspect-[16/10]">
+                {mainImage?.previewUrl ? (
+                  <img
+                    src={mainImage.previewUrl}
+                    alt={form.name || "Topping"}
+                    className="h-full w-full object-contain p-5"
+                  />
+                ) : (
+                  <div className="grid h-full place-items-center text-center text-[#b98c49]">
+                    <div>
+                      <ImagePlus size={42} className="mx-auto" />
+                      <p className="mt-3 text-sm font-bold text-[#8c672f]">
+                        Chưa có ảnh topping
+                      </p>
+                    </div>
+                  </div>
+                )}
 
-                <Field
-                  label="Thứ tự"
-                  value={form.sortOrder}
-                  inputMode="numeric"
-                  placeholder="1"
-                  onChange={(value) =>
-                    onUpdate("sortOrder", value.replace(/[^\d]/g, ""))
-                  }
-                />
+                {imageItems.length > 0 && (
+                  <span className="absolute left-4 top-4 rounded-full bg-[#b98c49] px-3 py-1.5 text-xs font-bold text-white shadow-sm">
+                    Ảnh bìa
+                  </span>
+                )}
               </div>
-            </div>
-          </section>
 
-          <section className="rounded-[26px] border border-[#ead7b6] bg-white p-4">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-black text-[#3b2a18]">
-                Hình topping
-              </p>
+              <div className="grid gap-2 border-t border-[#d8b77e]/55 p-3 sm:grid-cols-2">
+                <label className="inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#b98c49] px-4 text-sm font-brand uppercase tracking-[0.08em] text-white shadow-sm transition hover:bg-[#8c672f]">
+                  <ImagePlus size={18} />
+                  Thêm nhiều ảnh
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(event) => {
+                      onFilesAdd(event.target.files);
+                      event.target.value = "";
+                    }}
+                    className="hidden"
+                  />
+                </label>
 
-              {imagePreview && (
                 <button
                   type="button"
                   onClick={onClearImage}
-                  className="inline-flex h-8 items-center gap-1 rounded-full bg-red-50 px-3 text-xs font-bold text-red-500"
+                  disabled={imageItems.length === 0}
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#FFFAFA] px-4 text-sm font-bold text-red-600 ring-1 ring-red-100 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-45"
                 >
-                  <X size={13} />
-                  Xóa ảnh
+                  <Trash2 size={17} />
+                  Xóa tất cả
                 </button>
-              )}
-            </div>
+              </div>
 
-            <div className="mt-3 overflow-hidden rounded-[24px] border border-[#d8b77e] bg-[#FFFAFA]">
-              {imagePreview ? (
-                <img
-                  src={imagePreview}
-                  alt={form.name || "Topping"}
-                  className="h-52 w-full object-cover"
-                />
-              ) : (
-                <div className="grid h-52 place-items-center text-center text-[#b98c49]">
+              <div className="border-t border-[#d8b77e]/55 bg-[#FFFAFA] p-3">
+                <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
-                    <ImagePlus size={38} className="mx-auto" />
-                    <p className="mt-2 text-sm font-bold">Chưa có ảnh</p>
+                    <p className="text-xs font-bold text-[#3b2a18]">
+                      Thư viện ảnh topping
+                    </p>
+                    <p className="mt-1 text-[11px] font-medium text-[#756144]">
+                      Ảnh đầu tiên là ảnh bìa. Dùng Trước/Sau để đổi thứ tự.
+                    </p>
                   </div>
+
+                  <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-[#8c672f] ring-1 ring-[#d8b77e]/55">
+                    {imageItems.length} ảnh
+                  </span>
                 </div>
-              )}
-            </div>
 
-            <label className="mt-3 inline-flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#b98c49] px-4 text-sm font-brand text-white transition hover:bg-[#8c672f]">
-              <UploadCloud size={17} />
-              Chọn ảnh topping
-              <input
-                type="file"
-                accept="image/*,.gif"
-                className="hidden"
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) onFileChange(file);
-                  event.target.value = "";
-                }}
-              />
-            </label>
+                {imageItems.length > 0 ? (
+                  <div className="grid max-h-[260px] grid-cols-2 gap-3 overflow-y-auto pr-1 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+                    {imageItems.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className="group relative overflow-hidden rounded-2xl border border-[#d8b77e]/60 bg-white shadow-sm"
+                      >
+                        <div className="relative aspect-square">
+                          <img
+                            src={item.previewUrl}
+                            alt={item.name || `Ảnh ${index + 1}`}
+                            className="h-full w-full object-contain p-3"
+                          />
 
-            <input
-              value={form.imageUrl ?? ""}
-              placeholder="Hoặc dán URL ảnh..."
-              onChange={(event) => {
-                const url = event.target.value.trim();
+                          <button
+                            type="button"
+                            onClick={() => onImageRemove(index)}
+                            className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-red-500 text-white shadow-lg transition hover:bg-red-600"
+                            aria-label="Xóa ảnh"
+                          >
+                            <X size={16} />
+                          </button>
 
-                onFileChange(null);
-                onUpdate("imageUrl", url);
-                onUpdate(
-                  "media",
-                  url
-                    ? [
-                        {
-                          url,
-                          publicId: "",
-                          resourceType: "image",
-                          originalName: "URL image",
-                        },
-                      ]
-                    : []
-                );
-              }}
-              className="mt-3 h-11 w-full rounded-2xl border border-[#d8b77e] bg-white px-3 text-xs text-[#3b2a18] outline-none focus:border-[#b98c49]"
-            />
-          </section>
+                          {index === 0 && (
+                            <span className="absolute left-2 top-2 rounded-full bg-[#b98c49] px-2.5 py-1 text-[10px] font-bold text-white">
+                              Bìa
+                            </span>
+                          )}
+                        </div>
 
-          <Toggle
-            label="Hiển thị topping"
-            description="Tắt khi topping tạm hết hoặc chưa muốn hiện ngoài website."
-            checked={isVisible}
-            onChange={(checked) => {
-              onUpdate("isActive", checked);
-              onUpdate("isAvailable", checked);
-            }}
-          />
+                        <div className="grid grid-cols-2 gap-2 border-t border-[#d8b77e]/45 p-2">
+                          <button
+                            type="button"
+                            onClick={() => onImageMove(index, -1)}
+                            disabled={index === 0}
+                            className="inline-flex h-9 items-center justify-center gap-1 rounded-xl bg-[#FFFAFA] text-xs font-bold text-[#8c672f] ring-1 ring-[#d8b77e]/55 disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            <ChevronLeft size={15} />
+                            Trước
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => onImageMove(index, 1)}
+                            disabled={index === imageItems.length - 1}
+                            className="inline-flex h-9 items-center justify-center gap-1 rounded-xl bg-[#FFFAFA] text-xs font-bold text-[#8c672f] ring-1 ring-[#d8b77e]/55 disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            Sau
+                            <ChevronRight size={15} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-[#d8b77e]/70 bg-white px-4 py-8 text-center text-sm font-medium text-[#756144]">
+                    Chưa có ảnh nào. Bấm “Thêm nhiều ảnh” để tải ảnh topping.
+                  </div>
+                )}
+              </div>
+            </section>
+
+            <section className="min-w-0 space-y-4">
+              <div className="grid gap-4 rounded-[28px] border border-[#d8b77e]/65 bg-white p-4 shadow-sm">
+                <Field label="Tên topping" required>
+                  <input
+                    value={form.name || ""}
+                    onChange={(event) => onUpdate("name", event.target.value)}
+                    placeholder="Ví dụ: Kem cheese, trân châu..."
+                    className="h-[52px] w-full rounded-2xl border border-[#d8b77e]/70 bg-[#FFFAFA] px-4 text-sm font-bold text-[#3b2a18] outline-none transition focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
+                  />
+                </Field>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Giá topping">
+                    <div className="relative">
+                      <input
+                        value={formatVndInput(form.price)}
+                        onChange={(event) =>
+                          onUpdate("price", String(event.target.value || "").replace(/[^\d]/g, ""))
+                        }
+                        inputMode="numeric"
+                        placeholder="10.000"
+                        className="h-[52px] w-full rounded-2xl border border-[#d8b77e]/70 bg-[#FFFAFA] px-4 pr-16 text-sm font-bold text-[#3b2a18] outline-none transition placeholder:text-[#b8a589] focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
+                      />
+
+                      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-[#f6d77d]/35 px-2.5 py-1 text-[11px] font-bold text-[#8c672f]">
+                        VNĐ
+                      </span>
+                    </div>
+
+                    <p className="mt-2 rounded-xl bg-[#f6d77d]/25 px-3 py-2 text-xs font-bold text-[#b98c49]">
+                      {formatMoneyPreview(form.price)}
+                    </p>
+                  </Field>
+
+                  <Field label="Thứ tự">
+                    <input
+                      value={form.sortOrder || ""}
+                      onChange={(event) => onUpdate("sortOrder", event.target.value)}
+                      inputMode="numeric"
+                      placeholder="1"
+                      className="h-[52px] w-full rounded-2xl border border-[#d8b77e]/70 bg-[#FFFAFA] px-4 text-sm font-bold text-[#3b2a18] outline-none transition focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
+                    />
+                  </Field>
+                </div>
+
+                <Field label="Mô tả topping">
+                  <textarea
+                    value={form.description || ""}
+                    onChange={(event) => onUpdate("description", event.target.value)}
+                    rows={5}
+                    placeholder="Mô tả hương vị, món phù hợp dùng kèm, ghi chú cho khách..."
+                    className="min-h-[128px] w-full resize-none rounded-2xl border border-[#d8b77e]/70 bg-[#FFFAFA] p-4 text-sm font-semibold leading-7 text-[#3b2a18] outline-none transition focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
+                  />
+                </Field>
+              </div>
+
+              <div className="grid gap-3 rounded-[28px] border border-[#d8b77e]/65 bg-white p-4 shadow-sm">
+                <p className="flex items-center gap-2 text-xs font-brand uppercase tracking-[0.14em] text-[#8c672f]">
+                  <BadgePercent size={15} />
+                  Trạng thái
+                </p>
+
+                <Toggle
+                  icon={form.isActive !== false ? Eye : EyeOff}
+                  label="Công khai trên menu"
+                  description="Tắt nếu muốn ẩn topping khỏi menu khách hàng."
+                  checked={form.isActive !== false}
+                  onChange={(checked) => onUpdate("isActive", checked)}
+                />
+
+                <Toggle
+                  icon={form.isAvailable !== false ? Eye : EyeOff}
+                  label="Đang bán"
+                  description="Tắt khi topping tạm hết hàng."
+                  checked={form.isAvailable !== false}
+                  onChange={(checked) => onUpdate("isAvailable", checked)}
+                />
+
+                <Toggle
+                  icon={Sparkles}
+                  label="Topping nổi bật"
+                  description="Dùng để ưu tiên hiển thị trong các khu vực nổi bật."
+                  checked={Boolean(form.isFeatured)}
+                  onChange={(checked) => onUpdate("isFeatured", checked)}
+                />
+              </div>
+            </section>
+          </div>
         </div>
 
-        <div className="border-t border-[#ead7b6] bg-white p-5">
+        <footer className="flex shrink-0 flex-col gap-2 border-t border-[#d8b77e]/60 bg-white p-4 pb-[max(16px,env(safe-area-inset-bottom))] sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={submitting}
+            className="inline-flex h-[52px] items-center justify-center rounded-2xl bg-[#FFFAFA] px-5 text-sm font-bold text-[#8c672f] ring-1 ring-[#d8b77e]/70 transition hover:bg-[#f6d77d]/20 disabled:opacity-50"
+          >
+            Hủy
+          </button>
+
           <button
             type="submit"
             disabled={submitting}
-            className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#b98c49] px-6 text-sm font-brand uppercase tracking-[0.08em] text-white shadow-[0_16px_40px_rgba(185,140,73,.22)] transition hover:bg-[#8c672f] disabled:opacity-60"
+            className="inline-flex h-[52px] items-center justify-center gap-2 rounded-2xl bg-[#b98c49] px-6 text-sm font-brand uppercase tracking-[0.08em] text-white shadow-[0_14px_32px_rgba(185,140,73,.22)] transition hover:bg-[#8c672f] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {submitting ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-            {editing ? "Lưu thay đổi" : "Thêm topping"}
+            {submitting ? (
+              <Loader2 size={19} className="animate-spin" />
+            ) : (
+              <Save size={19} />
+            )}
+            {submitting
+              ? "Đang lưu..."
+              : editing
+                ? "Lưu thay đổi"
+                : "Tạo topping"}
           </button>
-        </div>
+        </footer>
       </form>
-    </div>
+    </div>,
+    document.body
   );
 }
 
-function PanelHeader({ editing, onClose }) {
+function Field({ label, required, children }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-[#ead7b6] bg-white p-5">
-      <div>
-        <p className="text-xs font-brand uppercase tracking-[0.14em] text-[#b98c49]">
-          {editing ? "Chỉnh sửa" : "Tạo mới"}
-        </p>
-
-        <h2 className="mt-1 text-2xl font-black text-[#3b2a18]">
-          {editing ? "Cập nhật topping" : "Thêm topping"}
-        </h2>
-      </div>
-
-      <button
-        type="button"
-        onClick={onClose}
-        className="grid h-10 w-10 place-items-center rounded-2xl bg-[#FFFAFA] text-[#8c672f]"
-      >
-        <X size={19} />
-      </button>
-    </div>
-  );
-}
-
-function Field({ label, value, onChange, required, placeholder, inputMode }) {
-  return (
-    <label className="block">
-      <span className="mb-2 block text-sm font-brand text-[#3b2a18]">
+    <label className="block min-w-0">
+      <span className="mb-2 block text-sm font-bold text-[#3b2a18]">
         {label} {required && <span className="text-red-500">*</span>}
       </span>
-
-      <input
-        value={value ?? ""}
-        required={required}
-        inputMode={inputMode}
-        placeholder={placeholder}
-        onChange={(event) => onChange(event.target.value)}
-        className="h-12 w-full rounded-2xl border border-[#d8b77e] bg-[#FFFAFA] px-4 text-sm text-[#3b2a18] outline-none transition placeholder:text-neutral-400 focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
-      />
+      {children}
     </label>
   );
 }
 
-function Textarea({ label, value, onChange, placeholder }) {
+function Toggle({ icon: Icon, label, description, checked, onChange }) {
   return (
-    <label className="block">
-      <span className="mb-2 block text-sm font-brand text-[#3b2a18]">
-        {label}
-      </span>
-
-      <textarea
-        value={value ?? ""}
-        rows={4}
-        placeholder={placeholder}
-        onChange={(event) => onChange(event.target.value)}
-        className="w-full resize-none rounded-2xl border border-[#d8b77e] bg-[#FFFAFA] px-4 py-3 text-sm leading-7 text-[#3b2a18] outline-none transition placeholder:text-neutral-400 focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
-      />
-    </label>
-  );
-}
-
-function Toggle({ label, description, checked, onChange }) {
-  return (
-    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-[24px] border border-[#d8b77e] bg-white p-4">
-      <span>
-        <span className="block text-sm font-black text-[#3b2a18]">
-          {label}
+    <label className="flex cursor-pointer items-start justify-between gap-4 rounded-2xl border border-[#d8b77e]/55 bg-[#FFFAFA] p-4 transition hover:bg-[#fff7eb]">
+      <div className="flex min-w-0 gap-3">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-[#f6d77d]/35 text-[#b98c49]">
+          <Icon size={18} />
         </span>
 
-        {description && (
-          <span className="mt-1 block text-xs leading-5 text-[#756144]">
+        <span className="min-w-0">
+          <span className="block text-sm font-bold text-[#3b2a18]">
+            {label}
+          </span>
+          <span className="mt-1 block text-xs font-medium leading-5 text-[#756144]">
             {description}
           </span>
-        )}
-      </span>
+        </span>
+      </div>
 
-      <span
-        className={cn(
-          "relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition",
-          checked ? "bg-[#b98c49]" : "bg-neutral-200"
-        )}
-      >
+      <span className="relative mt-1 inline-flex h-7 w-12 shrink-0 items-center rounded-full bg-[#e4d6c3] transition has-[:checked]:bg-[#b98c49]">
         <input
           type="checkbox"
           checked={checked}
           onChange={(event) => onChange(event.target.checked)}
           className="peer sr-only"
         />
-
-        <span
-          className={cn(
-            "ml-1 h-5 w-5 rounded-full bg-white shadow-sm transition",
-            checked && "translate-x-5"
-          )}
-        />
+        <span className="ml-1 h-5 w-5 rounded-full bg-white shadow-sm transition peer-checked:translate-x-5" />
       </span>
     </label>
   );

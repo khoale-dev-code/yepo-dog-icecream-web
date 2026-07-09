@@ -1,4 +1,54 @@
-import {
+﻿const fs = require("fs");
+const path = require("path");
+
+function walk(dir, files = []) {
+  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, item.name);
+
+    if (item.isDirectory()) {
+      if (!["node_modules", "dist", ".git", ".vercel"].includes(item.name)) {
+        walk(full, files);
+      }
+      continue;
+    }
+
+    if (/\.(jsx|js)$/.test(item.name)) files.push(full);
+  }
+
+  return files;
+}
+
+const files = walk("src");
+
+const footerFile = files.find((file) => {
+  const code = fs.readFileSync(file, "utf8");
+  return (
+    code.includes("Đặt bàn nhanh") ||
+    code.includes("Bạn có thể đặt bàn ngay") ||
+    code.includes("@yepo.dog.icecream")
+  );
+});
+
+if (!footerFile) {
+  throw new Error(
+    "Không tìm thấy file footer chứa 'Đặt bàn nhanh'. Hãy gửi mình file Footer hiện tại nếu script này lỗi."
+  );
+}
+
+const oldCode = fs.readFileSync(footerFile, "utf8");
+
+let componentName = "PublicFooter";
+
+const defaultMatch = oldCode.match(/export\s+default\s+function\s+([A-Za-z0-9_]+)/);
+const functionMatch = oldCode.match(/function\s+([A-Za-z0-9_]+)\s*\(/);
+
+if (defaultMatch?.[1]) {
+  componentName = defaultMatch[1];
+} else if (functionMatch?.[1]) {
+  componentName = functionMatch[1];
+}
+
+const newCode = `import {
   ArrowUp,
   CalendarDays,
   Clock3,
@@ -20,10 +70,10 @@ function getInstagramText(value) {
   return text
     .replace("https://instagram.com/", "@")
     .replace("https://www.instagram.com/", "@")
-    .replace(/\/$/, "");
+    .replace(/\\/$/, "");
 }
 
-export default function PublicFooter({ shop = {} }) {
+export default function ${componentName}({ shop = {} }) {
   const shopName = shop?.name || "YEPO Dog & Ice Cream";
   const phone = shop?.phone || "0961229449";
   const address =
@@ -168,3 +218,7 @@ function FooterInfo({ icon: Icon, text, href }) {
     </div>
   );
 }
+`;
+
+fs.writeFileSync(footerFile, newCode);
+console.log("✅ Rebuilt footer:", footerFile);
