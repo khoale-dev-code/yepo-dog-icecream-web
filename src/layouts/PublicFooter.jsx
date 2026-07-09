@@ -44,8 +44,7 @@ export default function PublicFooter({ shop = {} }) {
 
   return (
     <footer
-      data-yepo-public-footer="true"
-      className="border-t border-[#b98c49]/15 bg-white font-['Quicksand'] text-[#4A3320]"
+      data-yepo-public-footer="true" className="border-t border-[#b98c49]/15 bg-white font-['Quicksand'] text-[#4A3320] overflow-hidden"
     >
       <div className="mx-auto w-full max-w-7xl px-4 py-7 sm:px-6 sm:py-9 lg:px-8">
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,.9fr)] lg:items-start">
