@@ -61,7 +61,7 @@ export default function YepoBentoLanding() {
                 <br />
                 Là thế giới của những{" "}
                 <span className="relative inline-block text-[#b98c49]">
-                  idol bốn chân
+                  idol Cún Đáng Yêu
                   <svg
                     className="absolute -bottom-2 left-0 w-full text-[#f6d77d]"
                     viewBox="0 0 100 10"

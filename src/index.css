@@ -489,3 +489,21 @@ body {
     min-width: 0;
   }
 }
+
+/* Fix khoảng trống dư dưới trang quản lý bài đăng trên mobile */
+@media (max-width: 1023px) {
+  body.admin-mobile-dock-active main:has([data-admin-post-page="true"]) {
+    padding-bottom: 0 !important;
+  }
+
+  [data-admin-post-page="true"] {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  [data-admin-post-page="true"] > div:last-child,
+  [data-admin-post-page="true"] main > div:last-child,
+  [data-admin-post-page="true"] section:last-child {
+    margin-bottom: 0 !important;
+  }
+}

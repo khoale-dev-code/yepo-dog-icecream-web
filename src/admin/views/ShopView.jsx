@@ -10,7 +10,43 @@
   UploadCloud,
 } from "lucide-react";
 import { useState } from "react";
+import { flushSync } from "react-dom";
 import { api } from "../../lib/api";
+
+function getInstagramValue(form) {
+  return form?.instagram || form?.instagramUrl || "";
+}
+
+function getGoogleMapsValue(form) {
+  return (
+    form?.googleMapsEmbedUrl ||
+    form?.googleMapEmbedUrl ||
+    form?.googleMapsUrl ||
+    form?.mapEmbedUrl ||
+    ""
+  );
+}
+
+function buildShopSubmitPayload(form) {
+  const instagram = getInstagramValue(form);
+  const googleMapsEmbedUrl = getGoogleMapsValue(form);
+
+  return {
+    ...form,
+
+    instagram,
+    instagramUrl: instagram,
+
+    googleMapsEmbedUrl,
+    googleMapEmbedUrl: googleMapsEmbedUrl,
+    googleMapsUrl: googleMapsEmbedUrl,
+    mapEmbedUrl: googleMapsEmbedUrl,
+
+    heroImageUrl: form?.heroImageUrl || "",
+    coverImageUrl: form?.coverImageUrl || "",
+    logoUrl: form?.logoUrl || "",
+  };
+}
 
 export function ShopView({
   form,
@@ -24,6 +60,24 @@ export function ShopView({
     setForm((current) => ({
       ...current,
       [field]: value,
+    }));
+  }
+
+  function updateInstagram(value) {
+    setForm((current) => ({
+      ...current,
+      instagram: value,
+      instagramUrl: value,
+    }));
+  }
+
+  function updateGoogleMaps(value) {
+    setForm((current) => ({
+      ...current,
+      googleMapsEmbedUrl: value,
+      googleMapEmbedUrl: value,
+      googleMapsUrl: value,
+      mapEmbedUrl: value,
     }));
   }
 
@@ -50,8 +104,20 @@ export function ShopView({
     }
   }
 
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const payload = buildShopSubmitPayload(form);
+
+    flushSync(() => {
+      setForm(payload);
+    });
+
+    onSubmit?.(event, payload);
+  }
+
   return (
-    <form onSubmit={onSubmit} className="min-w-0 space-y-5 overflow-x-hidden">
+    <form onSubmit={handleSubmit} className="min-w-0 space-y-5 overflow-x-hidden">
       <section className="overflow-hidden rounded-[32px] border border-[#d8b77e]/80 bg-[#FFFAFA] p-5 shadow-[0_24px_80px_rgba(87,61,28,.08)] sm:p-6">
         <p className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-brand uppercase tracking-[0.14em] text-[#8c672f] ring-1 ring-[#d8b77e]/70">
           <Building2 size={15} />
@@ -63,7 +129,7 @@ export function ShopView({
         </h1>
 
         <p className="mt-3 max-w-2xl text-sm leading-7 text-[#756144]">
-          Cập nhật thông tin cửa hàng, ảnh logo, ảnh cover và ảnh hero hiển thị ở trang chủ.
+          Cập nhật thông tin cửa hàng, liên hệ, Google Maps, ảnh logo, ảnh cover và ảnh hero trang chủ.
         </p>
       </section>
 
@@ -115,10 +181,10 @@ export function ShopView({
 
               <Field
                 label="Instagram"
-                value={form.instagram}
-                placeholder="https://instagram.com/..."
+                value={getInstagramValue(form)}
+                placeholder="https://instagram.com/yepo.dog.icecream"
                 icon={Instagram}
-                onChange={(value) => update("instagram", value)}
+                onChange={updateInstagram}
               />
 
               <Field
@@ -132,9 +198,9 @@ export function ShopView({
               <div className="sm:col-span-2">
                 <Textarea
                   label="Google Maps Embed URL"
-                  value={form.googleMapsEmbedUrl}
+                  value={getGoogleMapsValue(form)}
                   placeholder="Dán link iframe/embed Google Maps..."
-                  onChange={(value) => update("googleMapsEmbedUrl", value)}
+                  onChange={updateGoogleMaps}
                 />
               </div>
             </div>

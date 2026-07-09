@@ -1,6 +1,6 @@
 ﻿<div align="center">
 
-# 🐶 YEPO Dog Icecream Web
+#   YEPO Dog Icecream Web
 
 ### Website quản lý & giới thiệu quán **YEPO Dog Icecream**
 
