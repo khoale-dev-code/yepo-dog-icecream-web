@@ -384,3 +384,46 @@ body {
     box-sizing: border-box;
   }
 }
+
+/* Topping client mobile tap fix */
+[data-topping-scroller="true"] {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+[data-topping-card="true"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (max-width: 640px) {
+  [data-topping-scroller="true"] {
+    scroll-padding-left: 16px;
+    scroll-padding-right: 16px;
+  }
+}
+
+/* Chrome mobile topping tap fix */
+[data-topping-scroller="true"] {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x pinch-zoom;
+}
+
+[data-topping-card="true"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: pan-x pinch-zoom;
+}
+
+[data-topping-card="true"] img,
+[data-topping-card="true"] span,
+[data-topping-card="true"] p,
+[data-topping-card="true"] div {
+  -webkit-user-drag: none;
+}
+
+@media (max-width: 640px) {
+  [data-topping-card="true"] {
+    cursor: pointer;
+  }
+}
