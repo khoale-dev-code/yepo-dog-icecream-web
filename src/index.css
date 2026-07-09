@@ -345,3 +345,18 @@ select:focus-visible,
     appearance: none;
   }
 }
+
+/* Global route scroll reset */
+html {
+  scroll-behavior: auto !important;
+  overflow-anchor: none;
+}
+
+body {
+  overflow-anchor: none;
+}
+
+[id],
+[name] {
+  scroll-margin-top: 96px;
+}

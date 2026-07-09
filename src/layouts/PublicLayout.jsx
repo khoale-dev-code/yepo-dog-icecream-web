@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import PublicNavbar from "../components/public/PublicNavbar";
 import PublicFooter from "./PublicFooter";
+import RouteScrollTop from "../components/RouteScrollTop.jsx";
 
 export default function PublicLayout({ shop, loading }) {
   return (
@@ -10,7 +11,8 @@ export default function PublicLayout({ shop, loading }) {
         <PublicNavbar shop={shop} loading={loading} />
         <main className="relative">
           <div className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-            <Outlet />
+            <RouteScrollTop />
+        <Outlet />
           </div>
         </main>
         <PublicFooter shop={shop} />

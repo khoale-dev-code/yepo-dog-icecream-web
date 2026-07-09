@@ -611,157 +611,227 @@ function ProductPager({ products }) {
 
   return (
     <div className="rounded-[2rem] border border-[#b98c49]/15 bg-white p-3 shadow-[0_10px_35px_rgba(185,140,73,.07)] sm:p-4">
-      <div
-        ref={scrollerRef}
-        onScroll={handleScroll}
-        className="hide-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth"
-      >
-        {pages.map((pageProducts, pageIndex) => (
-          <div
-            key={pageIndex}
-            className="min-w-full snap-start"
-            aria-label={`Trang sản phẩm ${pageIndex + 1}`}
-          >
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-5">
-              {pageProducts.map((product) => (
-                <UniformProductCard
-                  key={getId(product)}
-                  product={product}
-                />
-              ))}
-            </div>
+      {/* Mobile: card lớn, kéo ngang trong từng danh mục */}
+      <div className="-mx-3 sm:hidden">
+        <div
+          className="hide-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto px-3 pb-3 scroll-smooth"
+          aria-label="Vuốt ngang để xem thêm món"
+        >
+          {products.map((product) => (
+            <UniformProductCard
+              key={getId(product)}
+              product={product}
+              variant="mobile"
+            />
+          ))}
+        </div>
+
+        {products.length > 1 && (
+          <div className="mt-1 flex items-center justify-between rounded-2xl bg-[#FFFAFA] px-4 py-3 text-xs font-bold text-[#8c672f]">
+            <span>Vuốt sang trái để xem thêm món</span>
+            <ArrowRight size={15} />
           </div>
-        ))}
+        )}
       </div>
 
-      {pages.length > 1 && (
-        <div className="mt-4 flex flex-col gap-3 border-t border-[#b98c49]/10 pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-center text-xs font-bold text-[#8c672f] sm:text-left">
-            Trang {currentPage + 1}/{pages.length}
-          </div>
-
-          <div className="flex items-center justify-center gap-2">
-            <button
-              type="button"
-              onClick={() => goToPage(currentPage - 1)}
-              disabled={currentPage === 0}
-              className="grid h-10 w-10 place-items-center rounded-full bg-[#FFFAFA] text-[#8c672f] ring-1 ring-[#b98c49]/15 transition hover:bg-[#f6d77d]/25 disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Trang trước"
+      {/* Tablet/Desktop: giữ dạng lưới chia trang */}
+      <div className="hidden sm:block">
+        <div
+          ref={scrollerRef}
+          onScroll={handleScroll}
+          className="hide-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth"
+        >
+          {pages.map((pageProducts, pageIndex) => (
+            <div
+              key={pageIndex}
+              className="min-w-full snap-start"
+              aria-label={`Trang sản phẩm ${pageIndex + 1}`}
             >
-              <ChevronLeft size={18} />
-            </button>
-
-            <div className="flex max-w-[180px] items-center gap-1 overflow-hidden sm:max-w-none">
-              {pages.map((_, index) => {
-                const showDot =
-                  pages.length <= 7 ||
-                  index === 0 ||
-                  index === pages.length - 1 ||
-                  Math.abs(index - currentPage) <= 1;
-
-                if (!showDot) {
-                  if (index === currentPage - 2 || index === currentPage + 2) {
-                    return (
-                      <span
-                        key={index}
-                        className="px-1 text-xs font-bold text-[#b98c49]/50"
-                      >
-                        ...
-                      </span>
-                    );
-                  }
-
-                  return null;
-                }
-
-                return (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() => goToPage(index)}
-                    className={[
-                      "h-2.5 rounded-full transition-all",
-                      index === currentPage
-                        ? "w-8 bg-[#b98c49]"
-                        : "w-2.5 bg-[#b98c49]/25 hover:bg-[#b98c49]/45",
-                    ].join(" ")}
-                    aria-label={`Đến trang ${index + 1}`}
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+                {pageProducts.map((product) => (
+                  <UniformProductCard
+                    key={getId(product)}
+                    product={product}
                   />
-                );
-              })}
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {pages.length > 1 && (
+          <div className="mt-4 flex flex-col gap-3 border-t border-[#b98c49]/10 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-center text-xs font-bold text-[#8c672f] sm:text-left">
+              Trang {currentPage + 1}/{pages.length}
             </div>
 
-            <button
-              type="button"
-              onClick={() => goToPage(currentPage + 1)}
-              disabled={currentPage >= pages.length - 1}
-              className="grid h-10 w-10 place-items-center rounded-full bg-[#FFFAFA] text-[#8c672f] ring-1 ring-[#b98c49]/15 transition hover:bg-[#f6d77d]/25 disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Trang sau"
-            >
-              <ChevronRight size={18} />
-            </button>
+            <div className="flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 0}
+                className="grid h-10 w-10 place-items-center rounded-full bg-[#FFFAFA] text-[#8c672f] ring-1 ring-[#b98c49]/15 transition hover:bg-[#f6d77d]/25 disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label="Trang trước"
+              >
+                <ChevronLeft size={18} />
+              </button>
+
+              <div className="flex max-w-[180px] items-center gap-1 overflow-hidden sm:max-w-none">
+                {pages.map((_, index) => {
+                  const showDot =
+                    pages.length <= 7 ||
+                    index === 0 ||
+                    index === pages.length - 1 ||
+                    Math.abs(index - currentPage) <= 1;
+
+                  if (!showDot) {
+                    if (index === currentPage - 2 || index === currentPage + 2) {
+                      return (
+                        <span
+                          key={index}
+                          className="px-1 text-xs font-bold text-[#b98c49]/50"
+                        >
+                          ...
+                        </span>
+                      );
+                    }
+
+                    return null;
+                  }
+
+                  return (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => goToPage(index)}
+                      className={[
+                        "h-2.5 rounded-full transition-all",
+                        index === currentPage
+                          ? "w-8 bg-[#b98c49]"
+                          : "w-2.5 bg-[#b98c49]/25 hover:bg-[#b98c49]/45",
+                      ].join(" ")}
+                      aria-label={`Đến trang ${index + 1}`}
+                    />
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage >= pages.length - 1}
+                className="grid h-10 w-10 place-items-center rounded-full bg-[#FFFAFA] text-[#8c672f] ring-1 ring-[#b98c49]/15 transition hover:bg-[#f6d77d]/25 disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label="Trang sau"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
 
-function UniformProductCard({ product }) {
+function UniformProductCard({ product, variant = "desktop" }) {
   const image = getMedia(product);
   const category = getCategory(product);
+  const isMobile = variant === "mobile";
 
   return (
     <Link
       to={getProductPath(product)}
-      className="group flex min-h-[250px] flex-col overflow-hidden rounded-[1.45rem] border border-[#b98c49]/15 bg-[#FFFAFA] shadow-[0_6px_22px_rgba(185,140,73,.06)] transition duration-300 hover:-translate-y-1 hover:border-[#b98c49]/35 hover:bg-white hover:shadow-[0_18px_44px_rgba(185,140,73,.13)] sm:min-h-[290px]"
+      className={[
+        "group flex flex-col overflow-hidden border border-[#b98c49]/15 bg-[#FFFAFA] shadow-[0_10px_28px_rgba(185,140,73,.08)] transition duration-300 hover:-translate-y-1 hover:border-[#b98c49]/35 hover:bg-white hover:shadow-[0_18px_44px_rgba(185,140,73,.13)]",
+        isMobile
+          ? "min-h-[430px] w-[76vw] max-w-[330px] shrink-0 snap-start rounded-[2rem]"
+          : "min-h-[290px] rounded-[1.45rem]",
+      ].join(" ")}
     >
-      <div className="relative aspect-square bg-white">
+      <div
+        className={[
+          "relative overflow-hidden bg-white",
+          isMobile ? "aspect-[1.08/1] rounded-b-[1.5rem]" : "aspect-square",
+        ].join(" ")}
+      >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(246,215,125,.25),transparent_48%)]" />
 
         {image ? (
           <img
             src={image}
             alt={product.name}
-            className="relative z-10 h-full w-full object-contain p-3 transition duration-500 group-hover:scale-105 sm:p-4"
+            className={[
+              "relative z-10 h-full w-full object-contain transition duration-500 group-hover:scale-105",
+              isMobile ? "p-5" : "p-3 sm:p-4",
+            ].join(" ")}
           />
         ) : (
           <div className="relative z-10 grid h-full place-items-center text-[#b98c49]">
-            <IceCream2 size={34} />
+            <IceCream2 size={isMobile ? 44 : 34} />
           </div>
         )}
 
         {product.isFeatured === true && (
-          <span className="absolute left-2 top-2 z-20 inline-flex items-center gap-1 rounded-full bg-[#b98c49] px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-white">
-            <Crown size={10} />
+          <span
+            className={[
+              "absolute left-3 top-3 z-20 inline-flex items-center gap-1 rounded-full bg-[#b98c49] font-bold uppercase tracking-wider text-white shadow-sm",
+              isMobile ? "px-3 py-1.5 text-[11px]" : "px-2 py-1 text-[9px]",
+            ].join(" ")}
+          >
+            <Crown size={isMobile ? 13 : 10} />
             Best
           </span>
         )}
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col p-3">
+      <div className={isMobile ? "flex min-h-0 flex-1 flex-col p-5" : "flex min-h-0 flex-1 flex-col p-3"}>
         {category && (
-          <span className="mb-2 inline-flex w-fit max-w-full items-center gap-1 rounded-full bg-[#f6d77d]/30 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-[#8c672f]">
-            <Tag size={10} />
+          <span
+            className={[
+              "mb-3 inline-flex w-fit max-w-full items-center gap-1 rounded-full bg-[#f6d77d]/30 font-bold uppercase tracking-[0.1em] text-[#8c672f]",
+              isMobile ? "px-3 py-1.5 text-[11px]" : "px-2 py-1 text-[9px]",
+            ].join(" ")}
+          >
+            <Tag size={isMobile ? 13 : 10} />
             <span className="truncate">{category}</span>
           </span>
         )}
 
-        <h3 className="line-clamp-2 text-sm font-bold leading-snug text-[#2D2D2D] sm:text-base">
+        <h3
+          className={[
+            "line-clamp-2 font-bold text-[#2D2D2D]",
+            isMobile ? "text-[22px] leading-tight" : "text-sm leading-snug sm:text-base",
+          ].join(" ")}
+        >
           {product.name}
         </h3>
 
-        <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#666666]">
+        <p
+          className={[
+            "mt-2 line-clamp-2 text-[#666666]",
+            isMobile ? "text-[15px] leading-7" : "text-xs leading-5",
+          ].join(" ")}
+        >
           {getShortDescription(product)}
         </p>
 
-        <div className="mt-auto flex items-center justify-between gap-2 pt-3">
-          <p className="text-sm font-bold text-[#b98c49]">
+        <div className="mt-auto flex items-center justify-between gap-3 pt-5">
+          <p
+            className={[
+              "font-bold text-[#b98c49]",
+              isMobile ? "text-[22px]" : "text-sm",
+            ].join(" ")}
+          >
             {formatPrice(getProductPrice(product))}
           </p>
 
-          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white text-[#b98c49] ring-1 ring-[#b98c49]/15 transition group-hover:bg-[#b98c49] group-hover:text-white">
-            <ArrowRight size={14} />
+          <span
+            className={[
+              "grid shrink-0 place-items-center rounded-full bg-white text-[#b98c49] ring-1 ring-[#b98c49]/15 transition group-hover:bg-[#b98c49] group-hover:text-white",
+              isMobile ? "h-12 w-12" : "h-8 w-8",
+            ].join(" ")}
+          >
+            <ArrowRight size={isMobile ? 20 : 14} />
           </span>
         </div>
       </div>
