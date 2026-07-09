@@ -321,3 +321,27 @@ select:focus-visible,
     contain: layout paint;
   }
 }
+
+/* Reservation form mobile real-device fix */
+@media (max-width: 640px) {
+  [data-reservation-form="true"],
+  [data-reservation-form="true"] * {
+    box-sizing: border-box;
+  }
+
+  [data-reservation-form="true"] input,
+  [data-reservation-form="true"] select,
+  [data-reservation-form="true"] textarea {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    font-size: 16px !important;
+  }
+
+  [data-reservation-form="true"] input[type="date"],
+  [data-reservation-form="true"] input[type="time"],
+  [data-reservation-form="true"] select {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}

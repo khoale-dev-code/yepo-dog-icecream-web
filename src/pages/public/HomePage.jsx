@@ -680,6 +680,9 @@ function ReservationSection({ shop, scrollY }) {
 
   const quickTimes = ["09:00", "10:30", "14:00", "16:30", "19:00"];
 
+  const inputClass =
+    "block h-[58px] w-full min-w-0 max-w-full rounded-[22px] border-2 border-[#EAE2D8] bg-white px-4 text-base font-semibold leading-none text-[#2D2D2D] shadow-sm outline-none transition-all placeholder:text-[#B8B0A8] hover:border-[#b98c49]/50 focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10 sm:h-14 sm:px-5 sm:text-[15px]";
+
   useEffect(() => {
     function openFromHash() {
       if (window.location.hash === "#reservation") {
@@ -730,7 +733,7 @@ function ReservationSection({ shop, scrollY }) {
       setMessage({
         type: "error",
         text: "Vui lòng nhập số điện thoại hợp lệ.",
-      }); 
+      });
       return;
     }
 
@@ -810,18 +813,18 @@ function ReservationSection({ shop, scrollY }) {
   }
 
   return (
-    <div className="mx-4 sm:mx-8 lg:mx-12">
+    <div className="mx-3 sm:mx-8 lg:mx-12">
       <section
         id="reservation"
         ref={sectionRef}
         className={[
-          "relative overflow-hidden rounded-[2.5rem] border border-[#b98c49]/20 bg-white p-5 shadow-[0_8px_40px_rgba(185,140,73,0.08)] transition-all duration-700 ease-out sm:p-7 lg:p-8 motion-reduce:transition-none",
+          "relative overflow-hidden rounded-[2rem] border border-[#b98c49]/20 bg-white px-3 py-5 shadow-[0_8px_40px_rgba(185,140,73,0.08)] transition-all duration-700 ease-out sm:rounded-[2.5rem] sm:p-7 lg:p-8 motion-reduce:transition-none",
           sectionVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0",
         ].join(" ")}
       >
         <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#f6d77d]/25 blur-3xl" />
         <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-[#b98c49]/10 blur-3xl" />
-        <FloatingPaws scrollY={scrollY} speed={0.04} className="opacity-40" />
+        <FloatingPaws scrollY={scrollY} speed={0.04} className="opacity-30" />
 
         <div className="relative z-10">
           <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
@@ -831,7 +834,7 @@ function ReservationSection({ shop, scrollY }) {
                 Reservation
               </span>
 
-              <h2 className="mt-5 max-w-3xl font-['Quicksand'] text-3xl font-bold tracking-tight text-[#2D2D2D] sm:text-4xl">
+              <h2 className="mt-5 max-w-3xl font-['Quicksand'] text-2xl font-bold tracking-tight text-[#2D2D2D] sm:text-4xl">
                 Đặt bàn trước để YEPO chuẩn bị chỗ thật thoải mái.
               </h2>
 
@@ -844,7 +847,7 @@ function ReservationSection({ shop, scrollY }) {
               <button
                 type="button"
                 onClick={() => setIsFormOpen((current) => !current)}
-                className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-[#b98c49] px-7 text-sm font-['Quicksand'] font-bold text-white shadow-lg shadow-[#b98c49]/20 transition-all hover:bg-[#a1783a]"
+                className="inline-flex h-[54px] items-center justify-center gap-2 rounded-full bg-[#b98c49] px-7 text-sm font-['Quicksand'] font-bold text-white shadow-lg shadow-[#b98c49]/20 transition-all hover:bg-[#a1783a]"
               >
                 <CalendarDays size={18} />
                 {isFormOpen ? "Thu gọn form" : "Đặt bàn"}
@@ -853,7 +856,7 @@ function ReservationSection({ shop, scrollY }) {
               {shop?.phone && (
                 <a
                   href={"tel:" + shop.phone}
-                  className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-[#b98c49]/20 bg-white px-7 text-sm font-['Quicksand'] font-bold text-[#b98c49] shadow-sm transition hover:bg-[#FFFAFA]"
+                  className="inline-flex h-[54px] items-center justify-center gap-2 rounded-full border border-[#b98c49]/20 bg-white px-7 text-sm font-['Quicksand'] font-bold text-[#b98c49] shadow-sm transition hover:bg-[#FFFAFA]"
                 >
                   <Phone size={17} />
                   Gọi nhanh
@@ -886,31 +889,30 @@ function ReservationSection({ shop, scrollY }) {
 
           {isFormOpen && (
             <form
+              data-reservation-form="true"
               onSubmit={handleSubmit}
-              className="mt-7 rounded-[2rem] border border-[#b98c49]/10 bg-[#FFFAFA] p-5 shadow-inner sm:p-7"
+              className="mx-auto mt-7 w-full max-w-3xl overflow-hidden rounded-[2rem] border border-[#b98c49]/10 bg-[#FFFAFA] p-4 shadow-inner sm:p-7"
             >
-              <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <p className="text-[12px] font-['Fredoka'] font-semibold uppercase tracking-widest text-[#b98c49]">
-                    Request a table
-                  </p>
-                  <h3 className="mt-2 text-2xl font-['Quicksand'] font-bold text-[#2D2D2D]">
-                    Thông tin đặt bàn
-                  </h3>
-                </div>
-
-                <div className="hidden rounded-full bg-white px-5 py-2.5 text-xs font-['Quicksand'] font-bold text-[#b98c49] shadow-sm ring-1 ring-[#b98c49]/20 sm:block">
-                  YEPO sẽ xác nhận lại
-                </div>
+              <div className="mb-6">
+                <p className="text-[12px] font-['Fredoka'] font-semibold uppercase tracking-widest text-[#b98c49]">
+                  Request a table
+                </p>
+                <h3 className="mt-2 text-[28px] font-['Quicksand'] font-bold leading-tight text-[#2D2D2D] sm:text-3xl">
+                  Thông tin đặt bàn
+                </h3>
+                <p className="mt-2 text-sm font-medium leading-6 text-[#756144]">
+                  Điền thông tin bên dưới, YEPO sẽ liên hệ lại để xác nhận lịch.
+                </p>
               </div>
 
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid min-w-0 gap-5 sm:grid-cols-2">
                 <ReservationField label="Họ tên" icon={UserRound}>
                   <input
                     value={form.customerName}
                     onChange={(event) => update("customerName", event.target.value)}
                     placeholder="Tên của bạn"
-                    className="h-14 w-full rounded-2xl border-2 border-[#EAE2D8] bg-white px-5 text-[15px] font-medium text-[#2D2D2D] outline-none transition-all placeholder:text-[#AAAAAA] hover:border-[#b98c49]/50 focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
+                    autoComplete="name"
+                    className={inputClass}
                   />
                 </ReservationField>
 
@@ -919,8 +921,9 @@ function ReservationSection({ shop, scrollY }) {
                     value={form.phone}
                     onChange={(event) => update("phone", event.target.value)}
                     inputMode="tel"
+                    autoComplete="tel"
                     placeholder="090..."
-                    className="h-14 w-full rounded-2xl border-2 border-[#EAE2D8] bg-white px-5 text-[15px] font-medium text-[#2D2D2D] outline-none transition-all placeholder:text-[#AAAAAA] hover:border-[#b98c49]/50 focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
+                    className={inputClass}
                   />
                 </ReservationField>
 
@@ -928,7 +931,7 @@ function ReservationSection({ shop, scrollY }) {
                   <select
                     value={form.guestCount}
                     onChange={(event) => update("guestCount", event.target.value)}
-                    className="h-14 w-full rounded-2xl border-2 border-[#EAE2D8] bg-white px-5 text-[15px] font-medium text-[#2D2D2D] outline-none transition-all hover:border-[#b98c49]/50 focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
+                    className={inputClass + " appearance-none"}
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((count) => (
                       <option key={count} value={count}>
@@ -945,48 +948,53 @@ function ReservationSection({ shop, scrollY }) {
                     min={getTodayValue()}
                     value={form.reservationDate}
                     onChange={(event) => update("reservationDate", event.target.value)}
-                    className="h-14 w-full rounded-2xl border-2 border-[#EAE2D8] bg-white px-5 text-[15px] font-medium text-[#2D2D2D] outline-none transition-all hover:border-[#b98c49]/50 focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
+                    className={inputClass + " appearance-none"}
+                    style={{ minWidth: 0 }}
                   />
                 </ReservationField>
-              </div>
 
-              <div className="mt-5">
                 <ReservationField label="Giờ dự kiến" icon={Clock3}>
                   <input
                     type="time"
                     value={form.reservationTime}
                     onChange={(event) => update("reservationTime", event.target.value)}
-                    className="h-14 w-full rounded-2xl border-2 border-[#EAE2D8] bg-white px-5 text-[15px] font-medium text-[#2D2D2D] outline-none transition-all hover:border-[#b98c49]/50 focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
+                    className={inputClass + " appearance-none"}
+                    style={{ minWidth: 0 }}
                   />
                 </ReservationField>
 
-                <div className="mt-3 flex flex-wrap gap-2.5">
-                  {quickTimes.map((time) => (
-                    <button
-                      key={time}
-                      type="button"
-                      onClick={() => update("reservationTime", time)}
-                      className={[
-                        "rounded-full border-2 px-4 py-2 text-[13px] font-['Fredoka'] font-semibold transition-all duration-200",
-                        form.reservationTime === time
-                          ? "border-[#b98c49] bg-[#b98c49] text-white shadow-md shadow-[#b98c49]/30"
-                          : "border-[#EAE2D8] bg-white text-[#666666] hover:border-[#b98c49] hover:text-[#b98c49]",
-                      ].join(" ")}
-                    >
-                      {time}
-                    </button>
-                  ))}
+                <div className="min-w-0 sm:self-end">
+                  <p className="mb-3 text-[13px] font-bold text-[#8c672f]">
+                    Chọn nhanh giờ ghé
+                  </p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {quickTimes.map((time) => (
+                      <button
+                        key={time}
+                        type="button"
+                        onClick={() => update("reservationTime", time)}
+                        className={[
+                          "h-11 rounded-2xl border-2 text-sm font-['Fredoka'] font-semibold transition-all duration-200 active:scale-[0.98]",
+                          form.reservationTime === time
+                            ? "border-[#b98c49] bg-[#b98c49] text-white shadow-md shadow-[#b98c49]/30"
+                            : "border-[#EAE2D8] bg-white text-[#666666] hover:border-[#b98c49] hover:text-[#b98c49]",
+                        ].join(" ")}
+                      >
+                        {time}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-5">
+              <div className="mt-5 min-w-0">
                 <ReservationField label="Ghi chú thêm" icon={MessageSquare}>
                   <textarea
                     value={form.note}
                     onChange={(event) => update("note", event.target.value)}
                     rows={3}
                     placeholder="Ví dụ: muốn ngồi gần khu vực cún, đi cùng trẻ nhỏ, cần bàn yên tĩnh..."
-                    className="min-h-[110px] w-full resize-none rounded-2xl border-2 border-[#EAE2D8] bg-white p-5 text-[15px] font-medium text-[#2D2D2D] outline-none transition-all placeholder:text-[#AAAAAA] hover:border-[#b98c49]/50 focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
+                    className="block min-h-[118px] w-full min-w-0 max-w-full resize-none rounded-[22px] border-2 border-[#EAE2D8] bg-white p-4 text-base font-medium leading-7 text-[#2D2D2D] shadow-sm outline-none transition-all placeholder:text-[#B8B0A8] hover:border-[#b98c49]/50 focus:border-[#b98c49] focus:ring-4 focus:ring-[#b98c49]/10"
                   />
                 </ReservationField>
               </div>
@@ -994,7 +1002,7 @@ function ReservationSection({ shop, scrollY }) {
               {message.text && (
                 <div
                   className={[
-                    "mt-5 rounded-2xl px-5 py-4 text-[15px] font-medium leading-relaxed",
+                    "mt-5 rounded-[22px] px-4 py-4 text-[15px] font-semibold leading-relaxed",
                     message.type === "success"
                       ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
                       : "border border-red-200 bg-red-50 text-red-600",
@@ -1009,16 +1017,16 @@ function ReservationSection({ shop, scrollY }) {
                 </div>
               )}
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_auto]">
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-[#b98c49] px-8 text-base font-['Quicksand'] font-bold text-white shadow-lg shadow-[#b98c49]/20 transition-all hover:bg-[#a1783a] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex h-[66px] w-full items-center justify-center gap-2 rounded-[24px] bg-[#b98c49] px-6 text-[17px] font-['Quicksand'] font-black text-white shadow-[0_14px_30px_rgba(185,140,73,.28)] transition-all hover:bg-[#a1783a] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 sm:h-16 sm:px-9"
                 >
                   {submitting ? (
-                    <Loader2 size={20} className="animate-spin" />
+                    <Loader2 size={22} className="animate-spin" />
                   ) : (
-                    <CalendarDays size={20} />
+                    <CalendarDays size={22} />
                   )}
                   {submitting ? "Đang gửi..." : "Gửi yêu cầu đặt bàn"}
                 </button>
@@ -1026,13 +1034,13 @@ function ReservationSection({ shop, scrollY }) {
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="inline-flex h-14 items-center justify-center rounded-full border border-[#b98c49]/20 bg-white px-8 text-base font-['Quicksand'] font-bold text-[#b98c49] transition hover:bg-[#FFFAFA]"
+                  className="inline-flex h-[58px] items-center justify-center rounded-[22px] border border-[#b98c49]/20 bg-white px-8 text-base font-['Quicksand'] font-bold text-[#b98c49] transition hover:bg-[#FFFAFA] sm:h-16"
                 >
                   Thu gọn
                 </button>
               </div>
 
-              <p className="mt-4 text-center text-[13px] leading-relaxed text-[#999999] sm:text-left">
+              <p className="mt-4 text-center text-[12px] leading-relaxed text-[#999999] sm:text-left">
                 Khi gửi form, bạn đồng ý để YEPO liên hệ lại qua số điện thoại đã cung cấp nhằm xác nhận lịch đặt bàn.
               </p>
             </form>
@@ -1045,12 +1053,12 @@ function ReservationSection({ shop, scrollY }) {
 
 function ReservationField({ label, icon: Icon, children }) {
   return (
-    <label className="block">
-      <span className="mb-3 flex items-center gap-2 text-[15px] font-['Quicksand'] font-bold text-[#2D2D2D]">
-        <Icon size={16} className="text-[#b98c49]" />
-        {label}
+    <label className="block min-w-0">
+      <span className="mb-2.5 flex items-center gap-2 text-[16px] font-['Quicksand'] font-bold text-[#2D2D2D]">
+        <Icon size={18} className="shrink-0 text-[#b98c49]" />
+        <span className="min-w-0">{label}</span>
       </span>
-      {children}
+      <div className="min-w-0">{children}</div>
     </label>
   );
 }
