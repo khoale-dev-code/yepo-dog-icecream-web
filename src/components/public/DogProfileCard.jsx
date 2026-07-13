@@ -7,7 +7,7 @@
   Weight,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   getDogCardStyle,
@@ -435,6 +435,7 @@ export default function DogProfileCard({ dog }) {
 function DogDetailModal({ dog, cardTheme, genderTheme, onClose }) {
   const media = useMemo(() => getDogMedia(dog), [dog]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartRef = useRef({ x: 0, y: 0 });
 
   const activeMedia = media[activeIndex];
 
@@ -492,6 +493,39 @@ function DogDetailModal({ dog, cardTheme, genderTheme, onClose }) {
     setActiveIndex((current) => (current + 1) % media.length);
   }
 
+  function handleTouchStart(event) {
+    const touch = event.touches?.[0];
+
+    if (!touch) return;
+
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
+  }
+
+  function handleTouchEnd(event) {
+    if (media.length <= 1) return;
+
+    const touch = event.changedTouches?.[0];
+
+    if (!touch) return;
+
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+
+    // Chỉ nhận vuốt ngang rõ ràng, tránh nhầm với thao tác cuộn dọc.
+    if (Math.abs(deltaX) < 45 || Math.abs(deltaX) < Math.abs(deltaY) * 1.15) {
+      return;
+    }
+
+    if (deltaX < 0) {
+      goNext();
+    } else {
+      goPrevious();
+    }
+  }
+
   return (
     <div
       className="fixed left-0 top-0 z-[99999] flex h-[100svh] min-h-[100svh] w-screen max-w-[100vw] overflow-hidden bg-[#2d2015]/75 p-0 backdrop-blur-sm sm:inset-0 sm:h-auto sm:min-h-0 sm:items-center sm:justify-center sm:p-5"
@@ -540,6 +574,8 @@ function DogDetailModal({ dog, cardTheme, genderTheme, onClose }) {
             <div className="min-w-0">
               <div
                 style={modalFrameStyle}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
                 className="relative overflow-hidden rounded-[26px] border-[5px] border-white p-2 shadow-inner sm:rounded-[30px] sm:border-[6px] sm:p-3"
               >
                 <div className="overflow-hidden rounded-[20px] bg-white/45 sm:rounded-[22px]">
