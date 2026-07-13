@@ -1,4 +1,42 @@
-import {
+﻿const fs = require("fs");
+const path = require("path");
+
+function walk(dir, files = []) {
+  if (!fs.existsSync(dir)) return files;
+
+  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, item.name);
+
+    if (item.isDirectory()) {
+      if (!["node_modules", "dist", ".git", ".vercel"].includes(item.name)) {
+        walk(full, files);
+      }
+      continue;
+    }
+
+    if (/\.(jsx|js)$/.test(item.name)) {
+      files.push(full);
+    }
+  }
+
+  return files;
+}
+
+const dogsFile = walk("src").find((file) => {
+  const code = fs.readFileSync(file, "utf8");
+
+  return (
+    code.includes("export default function DogsPage") &&
+    code.includes("PAGE_SIZE") &&
+    code.includes("dogs")
+  );
+});
+
+if (!dogsFile) {
+  throw new Error("Không tìm thấy file DogsPage.jsx.");
+}
+
+const nextCode = String.raw`import {
   ArrowLeft,
   ArrowRight,
   CalendarDays,
@@ -624,3 +662,8 @@ function Chip({ children }) {
     </span>
   );
 }
+`;
+
+fs.writeFileSync(dogsFile, nextCode, "utf8");
+
+console.log("✅ Đã thay DogsPage bằng bản mobile-safe:", dogsFile);

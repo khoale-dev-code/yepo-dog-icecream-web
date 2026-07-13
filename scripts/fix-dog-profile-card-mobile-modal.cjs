@@ -1,438 +1,56 @@
-﻿import {
-  ChevronLeft,
-  ChevronRight,
-  PawPrint,
-  Star,
-  Video,
-  Weight,
-  X,
-} from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
-import {
-  getDogCardStyle,
-  getDogImageRingStyle,
-  getDogMediaFrameStyle,
-} from "../../lib/dogTheme";
+﻿const fs = require("fs");
+const path = require("path");
 
-function cn(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+function walk(dir, files = []) {
+  if (!fs.existsSync(dir)) return files;
 
-const CARD_THEMES = {
-  pink: {
-    ribbon: "bg-[#d68395]",
-    accentText: "text-[#b05b6f]",
-    detailsBg: "bg-[#fffbf2]",
-    modalBg: "bg-[#fff7fb]",
-  },
-  blue: {
-    ribbon: "bg-[#8eb2ca]",
-    accentText: "text-[#4a7a9c]",
-    detailsBg: "bg-[#f7fafc]",
-    modalBg: "bg-[#f5fbff]",
-  },
-  green: {
-    ribbon: "bg-[#9db072]",
-    accentText: "text-[#5e6e3a]",
-    detailsBg: "bg-[#f9fff0]",
-    modalBg: "bg-[#fbfff3]",
-  },
-  purple: {
-    ribbon: "bg-[#a699d1]",
-    accentText: "text-[#6c5b9c]",
-    detailsBg: "bg-[#fcfaff]",
-    modalBg: "bg-[#fcfaff]",
-  },
-  orange: {
-    ribbon: "bg-[#e5b18a]",
-    accentText: "text-[#a36b3e]",
-    detailsBg: "bg-[#fffcf9]",
-    modalBg: "bg-[#fff9f2]",
-  },
-};
+  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, item.name);
 
-const GENDER_THEME = {
-  male: { bg: "bg-[#b1cee3]", text: "text-[#4a7a9c]" },
-  female: { bg: "bg-[#f4b6c2]", text: "text-[#a85b6b]" },
-  unknown: { bg: "bg-[#f2e3b6]", text: "text-[#a38638]" },
-};
+    if (item.isDirectory()) {
+      if (!["node_modules", "dist", ".git", ".vercel"].includes(item.name)) {
+        walk(full, files);
+      }
+      continue;
+    }
 
-function getDogMedia(dog) {
-  const media = Array.isArray(dog?.media)
-    ? dog.media.filter((item) => item?.url)
-    : [];
-
-  if (media.length > 0) return media;
-
-  if (dog?.imageUrl) {
-    return [
-      {
-        url: dog.imageUrl,
-        resourceType: "image",
-        originalName: dog.name || "Dog image",
-      },
-    ];
-  }
-
-  return [];
-}
-
-function getDogImage(dog) {
-  if (dog?.imageUrl) return dog.imageUrl;
-
-  if (Array.isArray(dog?.media) && dog.media.length > 0) {
-    const firstImage = dog.media.find((item) => !isVideoMedia(item));
-    return firstImage?.url || dog.media[0]?.url || null;
-  }
-
-  return null;
-}
-
-function isVideoMedia(media) {
-  const url = String(media?.url || "").toLowerCase();
-  const type = String(media?.resourceType || media?.type || "").toLowerCase();
-
-  return (
-    type === "video" ||
-    url.includes(".mp4") ||
-    url.includes(".webm") ||
-    url.includes(".mov") ||
-    url.includes(".m4v")
-  );
-}
-
-function getGenderLabel(gender) {
-  if (gender === "male") return "Đực";
-  if (gender === "female") return "Cái";
-  return "Chưa rõ";
-}
-
-function getPatternLabel(pattern) {
-  const labels = {
-    solid: "Một màu",
-    "two-tone": "Hai màu",
-    spotted: "Đốm",
-    dotted: "Chấm bi",
-    brindle: "Vện",
-    mixed: "Pha màu",
-    other: "Khác",
-  };
-
-  return labels[pattern] || "Chưa cập nhật";
-}
-
-function formatList(value, fallback = "Chưa cập nhật") {
-  if (Array.isArray(value) && value.length > 0) {
-    return value.filter(Boolean).join(", ");
-  }
-
-  if (typeof value === "string" && value.trim()) {
-    return value.trim();
-  }
-
-  return fallback;
-}
-
-function getPresetThemeKey(dog) {
-  const value = String(dog?.colorTheme || "pink");
-
-  if (CARD_THEMES[value]) return value;
-
-  return "pink";
-}
-
-function getStarCount(value) {
-  const numeric = Number(value || 100);
-  return Math.max(1, Math.min(5, Math.round(numeric / 20)));
-}
-
-function isValidHex(value) {
-  return /^#[0-9a-f]{6}$/i.test(String(value || "").trim());
-}
-
-function getCoatColorSwatches(dog) {
-  const coatColors = Array.isArray(dog?.coatColors) ? dog.coatColors : [];
-
-  const normalized = coatColors
-    .map((color, index) => {
-      const hex = String(color?.hex || "").trim();
-      const name = String(
-        color?.name || color?.label || "Màu lông " + (index + 1)
-      ).trim();
-
-      if (!isValidHex(hex)) return null;
-
-      return { hex, name };
-    })
-    .filter(Boolean);
-
-  if (normalized.length > 0) return normalized.slice(0, 2);
-
-  if (dog?.coatColor) {
-    return [
-      {
-        hex: "#ffffff",
-        name: String(dog.coatColor),
-      },
-    ];
-  }
-
-  return [];
-}
-
-function isWhiteLikeColor(hex) {
-  const value = String(hex || "").toLowerCase();
-
-  return [
-    "#ffffff",
-    "#fff",
-    "#fefefe",
-    "#fafafa",
-    "#f8f8f8",
-    "#f7f7f7",
-    "#f5f5f5",
-  ].includes(value);
-}
-
-function CoatColorDots({ dog, className = "" }) {
-  const coatColors = getCoatColorSwatches(dog);
-
-  if (!coatColors.length) {
-    return (
-      <div className={cn("flex items-center gap-2", className)}>
-        <span className="inline-flex items-center justify-center rounded-full border border-[#eadfce] bg-white px-2 py-1 shadow-sm">
-          <span className="h-4 w-4 rounded-full border-2 border-[#d9cfc2] bg-[#f7efe4] shadow-inner" />
-        </span>
-
-        <span className="inline-flex items-center justify-center rounded-full border border-[#eadfce] bg-white px-2 py-1 shadow-sm">
-          <span className="h-4 w-4 rounded-full border-2 border-[#d9cfc2] bg-[#ece5da] shadow-inner" />
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <div className={cn("flex items-center gap-2", className)}>
-      {coatColors.map((color, index) => {
-        const whiteLike = isWhiteLikeColor(color.hex);
-
-        return (
-          <button
-            key={color.hex + "-" + index}
-            type="button"
-            title={color.name}
-            className="inline-flex items-center justify-center rounded-full border border-[#eadfce] bg-white px-2 py-1 shadow-sm transition hover:border-[#d8c4a5] hover:shadow"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <span
-              className={cn(
-                "h-4 w-4 rounded-full shadow-inner",
-                whiteLike
-                  ? "border-2 border-[#cfc5b8]"
-                  : "border-2 border-white"
-              )}
-              style={{ backgroundColor: color.hex }}
-            />
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-function StarStrip({ value }) {
-  const count = getStarCount(value);
-
-  return (
-    <div className="flex shrink-0 gap-1">
-      {Array.from({ length: 5 }).map((_, index) => {
-        const active = index < count;
-
-        return (
-          <Star
-            key={index}
-            size={15}
-            fill={active ? "currentColor" : "none"}
-            className={active ? "text-white" : "text-white/45"}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-export default function DogProfileCard({ dog }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const image = getDogImage(dog);
-  const isFeatured = dog?.isFeatured === true;
-
-  const cardTheme = CARD_THEMES[getPresetThemeKey(dog)] || CARD_THEMES.pink;
-  const genderTheme = GENDER_THEME[dog?.gender] || GENDER_THEME.unknown;
-
-  const cardStyle = getDogCardStyle(dog);
-  const frameStyle = getDogMediaFrameStyle(dog);
-  const imageStyle = getDogImageRingStyle(dog);
-
-  const personalityTags = Array.isArray(dog?.personalityTags)
-    ? dog.personalityTags.slice(0, 3)
-    : [];
-
-  const favoriteTreats = Array.isArray(dog?.favoriteTreats)
-    ? dog.favoriteTreats
-    : [];
-
-  const cardNumber = String(dog?.sortOrder || 1).padStart(3, "0");
-  const cuteness = dog?.cutenessLevel || 70;
-
-  const personalityText =
-    dog?.personality ||
-    personalityTags.join(", ") ||
-    "Chưa cập nhật tính cách";
-
-  const favoriteTreatText =
-    favoriteTreats.length > 0
-      ? favoriteTreats.join(", ")
-      : dog?.favoriteTreat || "Chưa cập nhật";
-
-  function openDetail() {
-    setIsOpen(true);
-  }
-
-  function handleKeyDown(event) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openDetail();
+    if (/\.(jsx|js)$/.test(item.name)) {
+      files.push(full);
     }
   }
 
-  return (
-    <>
-      <article
-        style={cardStyle}
-        role="button"
-        tabIndex={0}
-        onClick={openDetail}
-        onKeyDown={handleKeyDown}
-        className="group relative mx-auto flex w-full max-w-none cursor-pointer flex-col overflow-hidden rounded-[30px] border-2 p-3 shadow-[0_8px_24px_rgba(217,124,148,0.2)] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-[#b98c49]/25 sm:max-w-[340px] sm:rounded-[32px]"
-      >
-        <div
-          className={cn(
-            "flex items-center justify-between px-3 py-2",
-            cardTheme.accentText
-          )}
-        >
-          <h3 className="font-brand line-clamp-1 flex-1 break-words pr-2 text-[22px] font-medium uppercase tracking-[0.15em]">
-            {dog?.name || "Vô danh"}
-          </h3>
-
-          <div className="flex shrink-0 items-center gap-2">
-            <span className="text-[13px] font-medium opacity-70">
-              ID: {cardNumber}
-            </span>
-            <span className="text-lg font-black">+{cuteness * 25}</span>
-          </div>
-        </div>
-
-        <div
-          style={frameStyle}
-          className="relative mx-1 aspect-[4/3] overflow-hidden rounded-[24px] border-[5px] border-[#fffcf2] p-2"
-        >
-          {image ? (
-            <img
-              style={imageStyle}
-              src={image}
-              alt={dog?.name}
-              className="relative h-full w-full rounded-[16px] object-cover shadow-sm"
-            />
-          ) : (
-            <div className="relative grid h-full w-full place-items-center rounded-[16px] bg-white/40 text-white">
-              <PawPrint size={48} />
-            </div>
-          )}
-
-          {isFeatured && (
-            <div className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full border-2 border-white bg-[#ffda75] text-[#d49911] shadow-md">
-              <Star size={18} fill="currentColor" />
-            </div>
-          )}
-
-          <div className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#b05b6f] shadow-sm">
-            Bấm để xem chi tiết
-          </div>
-        </div>
-
-        <div
-          className={cn(
-            "mx-2 mt-4 flex items-center justify-between rounded-full px-5 py-2.5 text-white shadow-inner",
-            cardTheme.ribbon
-          )}
-        >
-          <span className="mr-2 line-clamp-1 text-sm font-bold uppercase tracking-wide">
-            {dog?.breed || "Chưa rõ giống"}
-          </span>
-
-          <StarStrip value={cuteness} />
-        </div>
-
-        <div
-          className={cn(
-            "mx-1 mb-1 mt-3 flex flex-1 flex-col rounded-[24px] p-4 shadow-inner",
-            cardTheme.detailsBg
-          )}
-        >
-          <p className="line-clamp-3 break-words text-[14px] font-medium leading-relaxed">
-            <span className={cn("mr-1 font-bold", cardTheme.accentText)}>
-              power:
-            </span>
-            <span className="text-[#b58b7f]">{personalityText}</span>
-          </p>
-
-          <div className="mt-4 flex flex-wrap gap-2.5">
-            <Badge className={cn(genderTheme.bg, genderTheme.text)}>
-              {getGenderLabel(dog?.gender)}
-            </Badge>
-
-            <Badge className="bg-[#e8f1f5] text-[#628296]">
-              {dog?.weightKg ? `${dog.weightKg}kg` : "N/A"}
-            </Badge>
-          </div>
-
-          <CoatColorDots
-            dog={dog}
-            className="mt-4 w-fit rounded-full bg-[#f8f3eb]/80 px-2 py-1 shadow-sm"
-          />
-
-          <div className="mt-auto flex flex-col gap-3 border-t-2 border-dashed border-[#fae8d2] pt-4">
-            <div className="flex items-start gap-1.5 break-words leading-snug">
-              <span className="shrink-0 text-[12px] font-bold uppercase tracking-wide text-[#d1a290]">
-                MÓN YÊU THÍCH:
-              </span>
-              <span className="text-[13px] font-medium text-[#b58b7f]">
-                {favoriteTreatText}
-              </span>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      {isOpen &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <DogDetailModal
-            dog={dog}
-            cardTheme={cardTheme}
-            genderTheme={genderTheme}
-            onClose={() => setIsOpen(false)}
-          />,
-          document.body
-        )}
-    </>
-  );
+  return files;
 }
 
-function DogDetailModal({ dog, cardTheme, genderTheme, onClose }) {
+const dogCardFile = walk("src").find((file) => {
+  const code = fs.readFileSync(file, "utf8");
+  return (
+    code.includes("export default function DogProfileCard") &&
+    code.includes("function DogDetailModal") &&
+    code.includes("getDogCardStyle")
+  );
+});
+
+if (!dogCardFile) {
+  throw new Error("Không tìm thấy DogProfileCard.jsx.");
+}
+
+let code = fs.readFileSync(dogCardFile, "utf8");
+
+// Cho card full hơn trên mobile, vẫn giới hạn width ở tablet/desktop
+code = code.replace(
+  "className=\"group relative mx-auto flex w-full max-w-[340px] cursor-pointer flex-col overflow-hidden rounded-[32px] border-2 p-3 shadow-[0_8px_24px_rgba(217,124,148,0.2)] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-[#b98c49]/25\"",
+  "className=\"group relative mx-auto flex w-full max-w-none cursor-pointer flex-col overflow-hidden rounded-[30px] border-2 p-3 shadow-[0_8px_24px_rgba(217,124,148,0.2)] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-[#b98c49]/25 sm:max-w-[340px] sm:rounded-[32px]\""
+);
+
+const start = code.indexOf("function DogDetailModal(");
+const end = code.indexOf("function DetailBox", start);
+
+if (start === -1 || end === -1) {
+  throw new Error("Không tìm thấy vùng DogDetailModal để thay thế.");
+}
+
+const newDogDetailModal = String.raw`function DogDetailModal({ dog, cardTheme, genderTheme, onClose }) {
   const media = useMemo(() => getDogMedia(dog), [dog]);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -771,42 +389,10 @@ function DogDetailModal({ dog, cardTheme, genderTheme, onClose }) {
   );
 }
 
-function DetailBox({ label, value, icon }) {
-  return (
-    <div className="rounded-[20px] bg-white/75 px-4 py-3">
-      <p className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#d1a290]">
-        {icon}
-        {label}
-      </p>
-      <p className="mt-1 break-words text-sm font-bold leading-6 text-[#8c672f]">
-        {value}
-      </p>
-    </div>
-  );
-}
+`;
 
-function LongDetail({ label, value }) {
-  return (
-    <div className="mt-4 rounded-[20px] bg-white/75 px-4 py-3">
-      <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#d1a290]">
-        {label}
-      </p>
-      <p className="mt-1 whitespace-pre-line break-words text-sm font-medium leading-7 text-[#8c672f]">
-        {value}
-      </p>
-    </div>
-  );
-}
+code = code.slice(0, start) + newDogDetailModal + code.slice(end);
 
-function Badge({ children, className }) {
-  return (
-    <span
-      className={cn(
-        "whitespace-nowrap rounded-full px-3 py-1.5 text-[12px] font-medium",
-        className
-      )}
-    >
-      {children}
-    </span>
-  );
-}
+fs.writeFileSync(dogCardFile, code, "utf8");
+
+console.log("✅ Đã sửa DogProfileCard mobile-safe:", dogCardFile);
